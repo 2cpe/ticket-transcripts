@@ -285,7 +285,7 @@ async function closeTicket(interaction) {
                 new ButtonBuilder()
                     .setLabel('View Transcript')
                     .setStyle(ButtonStyle.Link)
-                    .setURL(`https://2cpe.github.io/ticket-transcripts?id=${transcriptId}`)
+                    .setURL(`https://2cpe.github.io/ticket-transcripts?id=${transcriptId}&userId=${user.id}&creator=${user.id}`)
                     .setEmoji('📄')
             );
 

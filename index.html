@@ -198,86 +198,20 @@
     </div>
 
     <script>
-        // Discord OAuth2 Configuration
         const CLIENT_ID = 'Iv23liuWvE21F6WjdfSs';
         const REDIRECT_URI = 'https://2cpe.github.io/ticket-transcripts/callback.html';
         
-        // Check authentication before loading transcript
-        async function checkAuth() {
-            const token = localStorage.getItem('discord_token');
-            if (!token) {
-                await authenticate();
-                return false;
-            }
-            return true;
-        }
-
-        // Discord OAuth2 Authentication
-        async function authenticate() {
-            const state = Math.random().toString(36).substring(7);
-            localStorage.setItem('oauth_state', state);
-            
-            const authUrl = `https://discord.com/api/oauth2/authorize` +
-                `?client_id=${CLIENT_ID}` +
-                `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
-                `&response_type=code` +
-                `&scope=identify` +
-                `&state=${state}`;
-                
-            const popup = window.open(authUrl, 'discord-oauth', 'width=500,height=700');
-            
-            return new Promise((resolve) => {
-                window.addEventListener('message', async (event) => {
-                    if (event.data.type === 'oauth_callback') {
-                        const code = event.data.code;
-                        try {
-                            // Exchange code for token
-                            const response = await fetch('YOUR_AUTH_SERVER/token', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({ code })
-                            });
-                            
-                            const data = await response.json();
-                            if (data.access_token) {
-                                localStorage.setItem('discord_token', data.access_token);
-                                resolve(true);
-                                loadTranscript();
-                            }
-                        } catch (error) {
-                            console.error('Authentication failed:', error);
-                            showError('Authentication failed. Please try again.');
-                        }
-                    }
-                });
-            });
-        }
-
-        function getTranscriptId() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('id');
-        }
-
-        function escapeHtml(unsafe) {
-            return unsafe
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        }
-
-        function formatTimestamp(timestamp) {
-            const date = new Date(timestamp);
-            return date.toLocaleString();
-        }
-
         async function loadTranscript() {
-            if (!await checkAuth()) return;
-            
             const transcriptId = getTranscriptId();
+            const userId = getQueryParam('userId');
+            const ticketCreator = getQueryParam('creator');
+            
+            // Check if user is authorized to view this transcript
+            if (!userId || userId !== ticketCreator) {
+                showError('You are not authorized to view this transcript.');
+                return;
+            }
+
             const transcriptElement = document.getElementById('transcript');
             const ticketIdElement = document.getElementById('ticket-id');
             const transcriptDateElement = document.getElementById('transcript-date');
@@ -323,6 +257,30 @@
                         Failed to load transcript: ${error.message}
                     </div>`;
             }
+        }
+
+        function getTranscriptId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
+
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function formatTimestamp(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleString();
         }
 
         function showError(message) {
