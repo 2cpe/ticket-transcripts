@@ -49,19 +49,13 @@
             }
 
             try {
-                // Exchange code for token
-                const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
+                // Exchange code for token using our proxy
+                const tokenResponse = await fetch('https://your-vercel-app.vercel.app/api/auth', {
                     method: 'POST',
-                    body: new URLSearchParams({
-                        client_id: CLIENT_ID,
-                        client_secret: CLIENT_SECRET,
-                        grant_type: 'authorization_code',
-                        code: code,
-                        redirect_uri: REDIRECT_URI
-                    }),
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    }
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ code })
                 });
 
                 if (!tokenResponse.ok) {
@@ -69,6 +63,10 @@
                 }
 
                 const tokenData = await tokenResponse.json();
+                if (tokenData.error) {
+                    throw new Error(tokenData.error_description || 'Authentication failed');
+                }
+
                 localStorage.setItem('discord_token', tokenData.access_token);
 
                 // Redirect back to the original transcript page
