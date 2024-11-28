@@ -233,7 +233,7 @@
             }
 
             try {
-                const response = await fetch(`/api/transcripts/${transcriptId}`);
+                const response = await fetch(`./transcripts/${transcriptId}.json`);
                 if (!response.ok) {
                     throw new Error('Transcript not found or expired');
                 }
