@@ -198,6 +198,63 @@
     </div>
 
     <script>
+        // Discord OAuth2 Configuration
+        const CLIENT_ID = 'Iv23liuWvE21F6WjdfSs';
+        const REDIRECT_URI = 'https://2cpe.github.io/ticket-transcripts/callback.html';
+        
+        // Check authentication before loading transcript
+        async function checkAuth() {
+            const token = localStorage.getItem('discord_token');
+            if (!token) {
+                await authenticate();
+                return false;
+            }
+            return true;
+        }
+
+        // Discord OAuth2 Authentication
+        async function authenticate() {
+            const state = Math.random().toString(36).substring(7);
+            localStorage.setItem('oauth_state', state);
+            
+            const authUrl = `https://discord.com/api/oauth2/authorize` +
+                `?client_id=${CLIENT_ID}` +
+                `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
+                `&response_type=code` +
+                `&scope=identify` +
+                `&state=${state}`;
+                
+            const popup = window.open(authUrl, 'discord-oauth', 'width=500,height=700');
+            
+            return new Promise((resolve) => {
+                window.addEventListener('message', async (event) => {
+                    if (event.data.type === 'oauth_callback') {
+                        const code = event.data.code;
+                        try {
+                            // Exchange code for token
+                            const response = await fetch('YOUR_AUTH_SERVER/token', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ code })
+                            });
+                            
+                            const data = await response.json();
+                            if (data.access_token) {
+                                localStorage.setItem('discord_token', data.access_token);
+                                resolve(true);
+                                loadTranscript();
+                            }
+                        } catch (error) {
+                            console.error('Authentication failed:', error);
+                            showError('Authentication failed. Please try again.');
+                        }
+                    }
+                });
+            });
+        }
+
         function getTranscriptId() {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get('id');
@@ -218,49 +275,63 @@
         }
 
         async function loadTranscript() {
-            const transcriptId = getTranscriptId();
-            const accessToken = new URLSearchParams(window.location.search).get('token');
-            const transcriptElement = document.getElementById('transcript');
+            if (!await checkAuth()) return;
             
-            if (!transcriptId || !accessToken) {
+            const transcriptId = getTranscriptId();
+            const transcriptElement = document.getElementById('transcript');
+            const ticketIdElement = document.getElementById('ticket-id');
+            const transcriptDateElement = document.getElementById('transcript-date');
+
+            if (!transcriptId) {
                 transcriptElement.innerHTML = `
                     <div class="error">
                         <i class="fas fa-exclamation-triangle"></i>
-                        Invalid or missing access credentials
+                        No transcript ID provided
                     </div>`;
                 return;
             }
 
             try {
-                // Verify access first
-                const verifyResponse = await fetch(`/api/verify-transcript/${transcriptId}?token=${accessToken}`);
-                if (!verifyResponse.ok) {
-                    throw new Error('Access denied');
-                }
-
-                // Load transcript if access is verified
                 const response = await fetch(`./transcripts/${transcriptId}.json`);
                 if (!response.ok) {
                     throw new Error('Transcript not found or expired');
                 }
-                
                 const data = await response.json();
                 
-                // Verify the token matches
-                if (data.accessToken !== accessToken) {
-                    throw new Error('Invalid access token');
-                }
-
-                // Rest of your existing transcript display code...
+                ticketIdElement.textContent = data.title;
+                transcriptDateElement.textContent = formatTimestamp(Date.now());
+                
+                let html = '';
+                data.messages.forEach(msg => {
+                    html += `
+                        <div class="message">
+                            <div class="message-header">
+                                <img class="author-avatar" src="${msg.authorAvatar || 'https://cdn.discordapp.com/embed/avatars/0.png'}" alt="Avatar">
+                                <span class="author">${escapeHtml(msg.author)}</span>
+                                <span class="timestamp">${escapeHtml(msg.timestamp)}</span>
+                            </div>
+                            <div class="content">${escapeHtml(msg.content)}</div>
+                        </div>
+                    `;
+                });
+                
+                transcriptElement.innerHTML = html;
             } catch (error) {
                 transcriptElement.innerHTML = `
                     <div class="error">
                         <i class="fas fa-exclamation-triangle"></i>
-                        ${error.message === 'Access denied' ? 
-                          'You do not have permission to view this transcript' : 
-                          'Failed to load transcript: ' + error.message}
+                        Failed to load transcript: ${error.message}
                     </div>`;
             }
+        }
+
+        function showError(message) {
+            const transcriptElement = document.getElementById('transcript');
+            transcriptElement.innerHTML = `
+                <div class="error">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    ${message}
+                </div>`;
         }
 
         window.onload = loadTranscript;

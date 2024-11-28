@@ -1,36 +1,45 @@
 const express = require('express');
 const cors = require('cors');
+const fetch = require('node-fetch');
 const app = express();
-const port = 3000;
 
-app.use(cors({ 
+app.use(cors({
     origin: 'https://2cpe.github.io',
-    methods: ['GET', 'POST'],
     credentials: true
 }));
 app.use(express.json());
 
-// In-memory storage (replace with a database in production)
-const transcripts = new Map();
+const config = {
+    client_id: process.env.GITHUB_CLIENT_ID,
+    client_secret: process.env.DISCORD_CLIENT_SECRET,
+    redirect_uri: 'https://2cpe.github.io/ticket-transcripts/callback.html'
+};
 
-// Endpoint to save transcript
-app.post('/api/transcripts', (req, res) => {
-    const { id, title, messages } = req.body;
-    transcripts.set(id, { title, messages });
-    // Delete after 24 hours
-    setTimeout(() => transcripts.delete(id), 24 * 60 * 60 * 1000);
-    res.json({ success: true });
-});
+app.post('/token', async (req, res) => {
+    const { code } = req.body;
+    
+    try {
+        const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                client_id: config.client_id,
+                client_secret: config.client_secret,
+                grant_type: 'authorization_code',
+                code: code,
+                redirect_uri: config.redirect_uri
+            })
+        });
 
-// Endpoint to view transcript
-app.get('/api/transcripts/:id', (req, res) => {
-    const transcript = transcripts.get(req.params.id);
-    if (!transcript) {
-        return res.status(404).json({ error: 'Transcript not found or expired' });
+        const tokenData = await tokenResponse.json();
+        res.json(tokenData);
+    } catch (error) {
+        res.status(500).json({ error: 'Authentication failed' });
     }
-    res.json(transcript);
 });
 
-app.listen(port, () => {
-    console.log(`Transcript server running on port ${port}`);
+app.listen(3000, () => {
+    console.log('Auth server running on port 3000');
 }); 
