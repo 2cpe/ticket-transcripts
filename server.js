@@ -3,7 +3,11 @@ const cors = require('cors');
 const app = express();
 const port = 3000;
 
-app.use(cors()); // Enable CORS for GitHub Pages
+app.use(cors({ 
+    origin: 'https://2cpe.github.io',
+    methods: ['GET', 'POST'],
+    credentials: true
+}));
 app.use(express.json());
 
 // In-memory storage (replace with a database in production)
