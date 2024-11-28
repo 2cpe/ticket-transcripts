@@ -1,0 +1,20 @@
+name: Save Transcript
+on:
+  repository_dispatch:
+    types: [save-transcript]
+
+jobs:
+  save-transcript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Save Transcript
+        run: |
+          echo '${{ github.event.client_payload.transcript }}' > transcripts/${{ github.event.client_payload.id }}.json
+      - name: Commit files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add transcripts/
+          git commit -m "Add transcript ${{ github.event.client_payload.id }}"
+          git push 
