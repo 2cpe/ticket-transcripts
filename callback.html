@@ -88,9 +88,9 @@
                 // Redirect back to transcript page
                 const [transcriptId, userId] = state ? state.split('_') : [];
                 if (transcriptId && userId) {
-                    window.location.href = `../index.html?id=${transcriptId}&userId=${userId}&creator=${userId}`;
+                    window.location.href = `https://2cpe.github.io/ticket-transcripts/?id=${transcriptId}&userId=${userId}&creator=${userId}`;
                 } else {
-                    window.location.href = '../index.html';
+                    window.location.href = 'https://2cpe.github.io/ticket-transcripts/';
                 }
             } catch (error) {
                 console.error('Auth Error:', error);
