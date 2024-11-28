@@ -33,16 +33,57 @@
         <div class="loading">Please wait while we verify your identity.</div>
     </div>
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-        const state = urlParams.get('state');
+        const CLIENT_ID = 'Iv23liuWvE21F6WjdfSs';
+        const CLIENT_SECRET = '51xSS8NZLQO2p8ElCDCvxWmkuoajhuin';
+        const REDIRECT_URI = 'https://2cpe.github.io/ticket-transcripts/callback.html';
 
-        if (code && state) {
-            const [transcriptId, userId] = state.split('_');
-            window.location.href = `../index.html?id=${transcriptId}&userId=${userId}&verified=true`;
-        } else {
-            document.querySelector('.loading').textContent = 'Authentication failed: Missing parameters';
+        async function handleCallback() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const state = urlParams.get('state');
+            const storedState = localStorage.getItem('oauth_state');
+
+            if (!code || !state || state !== storedState) {
+                showError('Authentication failed: Invalid state');
+                return;
+            }
+
+            try {
+                // Exchange code for token
+                const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
+                    method: 'POST',
+                    body: new URLSearchParams({
+                        client_id: CLIENT_ID,
+                        client_secret: CLIENT_SECRET,
+                        grant_type: 'authorization_code',
+                        code: code,
+                        redirect_uri: REDIRECT_URI
+                    }),
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                });
+
+                if (!tokenResponse.ok) {
+                    throw new Error('Failed to get access token');
+                }
+
+                const tokenData = await tokenResponse.json();
+                localStorage.setItem('discord_token', tokenData.access_token);
+
+                // Redirect back to the original transcript page
+                const returnUrl = localStorage.getItem('return_url') || '../';
+                window.location.href = returnUrl;
+            } catch (error) {
+                showError(`Authentication failed: ${error.message}`);
+            }
         }
+
+        function showError(message) {
+            document.querySelector('.loading').textContent = message;
+        }
+
+        handleCallback();
     </script>
 </body>
 </html> 

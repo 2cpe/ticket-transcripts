@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Ticket Transcripts</title>
+    <style>
+        /* Copy the style from verify.html */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png" alt="Logo" class="icon">
+        <h1 class="title">Ticket Transcripts</h1>
+        <p class="description">Please login with Discord to view your ticket transcripts</p>
+        <a href="#" class="button" id="loginButton">
+            <i class="fab fa-discord"></i> Login with Discord
+        </a>
+    </div>
+
+    <script>
+        const CLIENT_ID = 'Iv23liuWvE21F6WjdfSs';
+        const REDIRECT_URI = 'https://2cpe.github.io/ticket-transcripts/callback.html';
+
+        document.getElementById('loginButton').href = 
+            `https://discord.com/api/oauth2/authorize` +
+            `?client_id=${CLIENT_ID}` +
+            `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
+            `&response_type=code` +
+            `&scope=identify` +
+            `&state=login`;
+    </script>
+</body>
+</html> 
