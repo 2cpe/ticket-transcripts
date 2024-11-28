@@ -180,7 +180,60 @@ function generateUniqueId() {
     return Math.random().toString(36).substring(2, 15);
 }
 
-// Update the transcript part in the closeTicket function
+// Add this Map to store transcript access tokens at the top of your file
+const transcriptAccessTokens = new Map();
+
+// Update the saveTranscript function to include a secure access token
+async function saveTranscript(transcriptData, userId) {
+    const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+    const REPO_OWNER = '2cpe';
+    const REPO_NAME = 'ticket-transcripts';
+    
+    // Generate a secure access token
+    const accessToken = require('crypto').randomBytes(32).toString('hex');
+    
+    // Store the access token with user ID
+    transcriptAccessTokens.set(transcriptData.id, {
+        userId: userId,
+        accessToken: accessToken,
+        expires: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
+    });
+
+    // Add access token to transcript data
+    const secureTranscriptData = {
+        ...transcriptData,
+        accessToken: accessToken
+    };
+
+    try {
+        const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/transcripts/${transcriptData.id}.json`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `token ${GITHUB_TOKEN}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                message: `Add transcript ${transcriptData.id}`,
+                content: Buffer.from(JSON.stringify(secureTranscriptData, null, 2)).toString('base64'),
+                branch: 'main'
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`GitHub API responded with status ${response.status}: ${JSON.stringify(errorData)}`);
+        }
+
+        console.log('Transcript saved successfully');
+        return accessToken;
+    } catch (error) {
+        console.error('Error saving transcript to GitHub:', error);
+        throw error;
+    }
+}
+
+// Update the closeTicket function's transcript handling
 async function closeTicket(interaction) {
     const channel = interaction.channel;
     
@@ -280,89 +333,7 @@ async function closeTicket(interaction) {
             .setColor('#2b2d31')
             .setTimestamp();
 
-        const row = new ActionRowBuilder()
-            .addComponents(
-                new ButtonBuilder()
-                    .setLabel('View Transcript')
-                    .setStyle(ButtonStyle.Link)
-                    .setURL(`https://2cpe.github.io/ticket-transcripts/transcripts/${transcriptId}.json`)
-                    .setEmoji('📄')
-            );
-
-        // Send transcript embed to user
-        await user.send({
-            embeds: [transcriptEmbed],
-            components: [row]
-        });
-
-        // Update the rating embed section
-        const ratingEmbed = new EmbedBuilder()
-            .setTitle('Ticket Rating')
-            .setDescription('Please rate your experience and provide feedback')
-            .setColor('#ffff00')
-            .setFooter({ text: 'Click a rating to provide detailed feedback' });
-
-        const ratingRow = new ActionRowBuilder()
-            .addComponents(
-                new ButtonBuilder()
-                    .setCustomId('rate_1')
-                    .setLabel('1')
-                    .setEmoji('⭐')
-                    .setStyle(ButtonStyle.Secondary),
-                new ButtonBuilder()
-                    .setCustomId('rate_2')
-                    .setLabel('2')
-                    .setEmoji('⭐')
-                    .setStyle(ButtonStyle.Secondary),
-                new ButtonBuilder()
-                    .setCustomId('rate_3')
-                    .setLabel('3')
-                    .setEmoji('⭐')
-                    .setStyle(ButtonStyle.Secondary),
-                new ButtonBuilder()
-                    .setCustomId('rate_4')
-                    .setLabel('4')
-                    .setEmoji('⭐')
-                    .setStyle(ButtonStyle.Secondary),
-                new ButtonBuilder()
-                    .setCustomId('rate_5')
-                    .setLabel('5')
-                    .setEmoji('⭐')
-                    .setStyle(ButtonStyle.Secondary)
-            );
-
-        await user.send({ embeds: [ratingEmbed], components: [ratingRow] });
-
-        // Only send a simple notification to logs channel
-        const closeLogsChannel = await client.channels.fetch(config.ticketCloseLogs);
-        const ticketCloseEmbed = new EmbedBuilder()
-            .setAuthor({ 
-                name: 'Ticket Closed',
-            })
-            .setDescription(`
-            ### 🎫 Ticket Details
-            > **Channel:** \`${channel.name}\`
-            > **Status:** Closed
-            > **Action by:** ${interaction.user}
-            > **User:** ${user}
-            > **Date:** <t:${Math.floor(Date.now() / 1000)}:F>
-            
-            *Transcript has been sent to the user*`)
-            .setColor('#2b2d31')
-            .setThumbnail('https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png?ex=67498efb&is=67483d7b&hm=abf97f5dcad8ee9526594b5436731c398354f46e02b4cd3b23b070902be7e0a8&')
-            .setTimestamp();
-
-        await closeLogsChannel.send({
-            embeds: [ticketCloseEmbed]
-        });
-
-        // Notify that the ticket is being closed
-        await interaction.reply({ content: 'Closing ticket...', ephemeral: true });
-        
-        // Delete the ticket channel
-        await channel.delete();
-
-        // In the closeTicket function, before sending the transcript
+        // When creating transcript data
         const transcriptData = {
             id: transcriptId,
             title: channel.name,
@@ -374,19 +345,100 @@ async function closeTicket(interaction) {
             }))
         };
 
-        // Send transcript data to your server
         try {
-            await fetch('YOUR_SERVER_URL/api/transcripts', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(transcriptData)
-            });
-        } catch (error) {
-            console.error('Error saving transcript:', error);
-        }
+            // Save transcript and get access token
+            const accessToken = await saveTranscript(transcriptData, userId);
 
+            // Update the transcript button URL to include the access token
+            const row = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setLabel('View Transcript')
+                        .setStyle(ButtonStyle.Link)
+                        .setURL(`https://2cpe.github.io/ticket-transcripts?id=${transcriptId}&token=${accessToken}`)
+                        .setEmoji('📄')
+                );
+
+            // Send transcript embed to user
+            await user.send({
+                embeds: [transcriptEmbed],
+                components: [row]
+            });
+
+            // Update the rating embed section
+            const ratingEmbed = new EmbedBuilder()
+                .setTitle('Ticket Rating')
+                .setDescription('Please rate your experience and provide feedback')
+                .setColor('#ffff00')
+                .setFooter({ text: 'Click a rating to provide detailed feedback' });
+
+            const ratingRow = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId('rate_1')
+                        .setLabel('1')
+                        .setEmoji('⭐')
+                        .setStyle(ButtonStyle.Secondary),
+                    new ButtonBuilder()
+                        .setCustomId('rate_2')
+                        .setLabel('2')
+                        .setEmoji('⭐')
+                        .setStyle(ButtonStyle.Secondary),
+                    new ButtonBuilder()
+                        .setCustomId('rate_3')
+                        .setLabel('3')
+                        .setEmoji('⭐')
+                        .setStyle(ButtonStyle.Secondary),
+                    new ButtonBuilder()
+                        .setCustomId('rate_4')
+                        .setLabel('4')
+                        .setEmoji('⭐')
+                        .setStyle(ButtonStyle.Secondary),
+                    new ButtonBuilder()
+                        .setCustomId('rate_5')
+                        .setLabel('5')
+                        .setEmoji('⭐')
+                        .setStyle(ButtonStyle.Secondary)
+                );
+
+            await user.send({ embeds: [ratingEmbed], components: [ratingRow] });
+
+            // Only send a simple notification to logs channel
+            const closeLogsChannel = await client.channels.fetch(config.ticketCloseLogs);
+            const ticketCloseEmbed = new EmbedBuilder()
+                .setAuthor({ 
+                    name: 'Ticket Closed',
+                })
+                .setDescription(`
+                ### 🎫 Ticket Details
+                > **Channel:** \`${channel.name}\`
+                > **Status:** Closed
+                > **Action by:** ${interaction.user}
+                > **User:** ${user}
+                > **Date:** <t:${Math.floor(Date.now() / 1000)}:F>
+                
+                *Transcript has been sent to the user*`)
+                .setColor('#2b2d31')
+                .setThumbnail('https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png?ex=67498efb&is=67483d7b&hm=abf97f5dcad8ee9526594b5436731c398354f46e02b4cd3b23b070902be7e0a8&')
+                .setTimestamp();
+
+            await closeLogsChannel.send({
+                embeds: [ticketCloseEmbed]
+            });
+
+            // Notify that the ticket is being closed
+            await interaction.reply({ content: 'Closing ticket...', ephemeral: true });
+            
+            // Delete the ticket channel
+            await channel.delete();
+
+        } catch (error) {
+            console.error('Error handling ticket closure:', error);
+            await interaction.reply({ 
+                content: 'An error occurred while processing the ticket closure.', 
+                ephemeral: true 
+            });
+        }
     } catch (error) {
         console.error('Error handling ticket closure:', error);
         await interaction.reply({ 
@@ -484,31 +536,25 @@ client.on('interactionCreate', async (interaction) => {
     });
 });
 
-// Add this function to your bot
-async function saveTranscript(transcriptData) {
-    const GITHUB_TOKEN = process.env.GITHUB_TOKEN; // Add this to your .env file
-    const REPO_OWNER = '2cpe';
-    const REPO_NAME = 'ticket-transcripts';
+// Add a new endpoint to verify transcript access
+app.get('/api/verify-transcript/:id', (req, res) => {
+    const { id, token } = req.query;
+    const accessData = transcriptAccessTokens.get(id);
 
-    try {
-        await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/dispatches`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `token ${GITHUB_TOKEN}`,
-                'Accept': 'application/vnd.github.v3+json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                event_type: 'save-transcript',
-                client_payload: {
-                    transcript: JSON.stringify(transcriptData),
-                    id: transcriptData.id
-                }
-            })
-        });
-    } catch (error) {
-        console.error('Error saving transcript:', error);
+    if (!accessData) {
+        return res.status(404).json({ error: 'Transcript not found' });
     }
-}
+
+    if (accessData.accessToken !== token) {
+        return res.status(403).json({ error: 'Invalid access token' });
+    }
+
+    if (Date.now() > accessData.expires) {
+        transcriptAccessTokens.delete(id);
+        return res.status(403).json({ error: 'Access token expired' });
+    }
+
+    res.json({ valid: true });
+});
 
 client.login(config.token);
