@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Transcript</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #36393f;
+            color: #dcddde;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            background-color: #2f3136;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #40444b;
+            text-align: center;
+        }
+
+        .header img {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            color: #ffffff;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            color: #b9bbbe;
+            font-size: 14px;
+        }
+
+        #transcript {
+            background-color: #2f3136;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #40444b;
+        }
+
+        .message {
+            margin: 10px 0;
+            padding: 15px;
+            background-color: #36393f;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+
+        .message:hover {
+            background-color: #32353b;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .author {
+            font-weight: 600;
+            color: #ffffff;
+            margin-right: 8px;
+        }
+
+        .timestamp {
+            color: #72767d;
+            font-size: 0.8em;
+        }
+
+        .content {
+            margin-left: 50px;
+            color: #dcddde;
+            font-size: 15px;
+            word-wrap: break-word;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #ffffff;
+        }
+
+        .loading i {
+            margin-right: 10px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background-color: #f04747;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .info-bar {
+            background-color: #202225;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            color: #b9bbbe;
+            font-size: 14px;
+        }
+
+        .info-item i {
+            margin-right: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+
+            .message {
+                padding: 10px;
+            }
+
+            .content {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+
+            .info-bar {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png?ex=674a37bb&is=6748e63b&hm=78b76df79434c93afed039ba16a3050f32b25807d9a8669d7e6f1366b5313e07&" alt="Logo">
+            <h1>Ticket Transcript</h1>
+            <p>A record of your support conversation</p>
+        </div>
+
+        <div class="info-bar">
+            <div class="info-item">
+                <i class="fas fa-ticket-alt"></i>
+                <span id="ticket-id">Loading ticket information...</span>
+            </div>
+            <div class="info-item">
+                <i class="far fa-clock"></i>
+                <span id="transcript-date"></span>
+            </div>
+        </div>
+
+        <div id="transcript">
+            <div class="loading">
+                <i class="fas fa-circle-notch"></i>
+                Loading transcript...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function getTranscriptId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
+
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function formatTimestamp(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleString();
+        }
+
+        async function loadTranscript() {
+            const transcriptId = getTranscriptId();
+            const transcriptElement = document.getElementById('transcript');
+            const ticketIdElement = document.getElementById('ticket-id');
+            const transcriptDateElement = document.getElementById('transcript-date');
+
+            if (!transcriptId) {
+                transcriptElement.innerHTML = `
+                    <div class="error">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        No transcript ID provided
+                    </div>`;
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/transcripts/${transcriptId}`);
+                if (!response.ok) {
+                    throw new Error('Transcript not found or expired');
+                }
+                const data = await response.json();
+                
+                ticketIdElement.textContent = data.title;
+                transcriptDateElement.textContent = formatTimestamp(Date.now());
+                
+                let html = '';
+                data.messages.forEach(msg => {
+                    html += `
+                        <div class="message">
+                            <div class="message-header">
+                                <img class="author-avatar" src="${msg.authorAvatar || 'https://cdn.discordapp.com/embed/avatars/0.png'}" alt="Avatar">
+                                <span class="author">${escapeHtml(msg.author)}</span>
+                                <span class="timestamp">${escapeHtml(msg.timestamp)}</span>
+                            </div>
+                            <div class="content">${escapeHtml(msg.content)}</div>
+                        </div>
+                    `;
+                });
+                
+                transcriptElement.innerHTML = html;
+            } catch (error) {
+                transcriptElement.innerHTML = `
+                    <div class="error">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Failed to load transcript: ${error.message}
+                    </div>`;
+            }
+        }
+
+        window.onload = loadTranscript;
+    </script>
+</body>
+</html> 
