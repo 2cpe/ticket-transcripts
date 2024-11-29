@@ -224,77 +224,48 @@
             100% { transform: scale(1); }
         }
 
-        .attachment-link {
-            color: #00b0f4;
-            text-decoration: none;
-            padding: 8px;
-            background: #2f3136;
+        .error-details {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            text-align: left;
+        }
+
+        .error-tip {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
             border-radius: 4px;
-            transition: background-color 0.2s;
+            font-style: italic;
         }
 
-        .attachment-link:hover {
-            background: #36393f;
-            text-decoration: underline;
+        .error-list {
+            list-style-type: none;
+            padding-left: 0;
+            margin: 10px 0;
         }
 
-        .content img, .content video {
-            display: block;
-            margin-top: 10px;
-            max-width: 100%;
-            height: auto;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: transform 0.2s;
+        .error-list li {
+            padding: 5px 0 5px 25px;
+            position: relative;
         }
 
-        .content img:hover {
-            transform: scale(1.02);
+        .error-list li:before {
+            content: "•";
+            position: absolute;
+            left: 10px;
+            color: var(--error-color);
         }
 
-        .message-link {
-            color: #00b0f4;
-            text-decoration: none;
+        .error-container {
+            --error-color: #ff4444;
+            animation: fadeIn 0.3s ease-in-out;
         }
 
-        .message-link:hover {
-            text-decoration: underline;
-        }
-
-        .image-attachment {
-            margin-top: 8px;
-            max-width: 100%;
-        }
-
-        .image-attachment img {
-            max-width: 400px;
-            max-height: 300px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .image-attachment img:hover {
-            transform: scale(1.02);
-        }
-
-        .video-attachment {
-            margin-top: 8px;
-        }
-
-        .video-attachment video {
-            max-width: 400px;
-            max-height: 300px;
-            border-radius: 4px;
-        }
-
-        .file-attachment {
-            margin-top: 8px;
-        }
-
-        .message-text {
-            white-space: pre-wrap;
-            word-break: break-word;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -411,46 +382,6 @@
                 
                 let html = '';
                 data.messages.forEach(msg => {
-                    let messageContent = msg.content;
-
-                    // Handle Discord links (like tenor.com)
-                    if (messageContent.includes('https://tenor.com')) {
-                        messageContent = messageContent.replace(
-                            /(https:\/\/tenor\.com\/[^\s]+)/g,
-                            '<a href="$1" target="_blank" class="message-link">$1</a>'
-                        );
-                    }
-
-                    // Handle image attachments
-                    let attachmentsHtml = '';
-                    if (msg.attachments && msg.attachments.length > 0) {
-                        attachmentsHtml = msg.attachments.map(attachment => {
-                            // For images
-                            if (attachment.url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
-                                return `<div class="image-attachment">
-                                    <img src="${escapeHtml(attachment.url)}" 
-                                         alt="${escapeHtml(attachment.name)}" 
-                                         onclick="window.open('${escapeHtml(attachment.url)}', '_blank')">
-                                </div>`;
-                            }
-                            // For videos
-                            else if (attachment.url.match(/\.(mp4|webm|mov)$/i)) {
-                                return `<div class="video-attachment">
-                                    <video controls>
-                                        <source src="${escapeHtml(attachment.url)}" type="${attachment.contentType || 'video/mp4'}">
-                                        Your browser does not support the video tag.
-                                    </video>
-                                </div>`;
-                            }
-                            // For other files
-                            return `<div class="file-attachment">
-                                <a href="${escapeHtml(attachment.url)}" target="_blank" class="attachment-link">
-                                    📎 ${escapeHtml(attachment.name)}
-                                </a>
-                            </div>`;
-                        }).join('');
-                    }
-
                     html += `
                         <div class="message">
                             <div class="message-header">
@@ -458,10 +389,7 @@
                                 <span class="author">${escapeHtml(msg.author)}</span>
                                 <span class="timestamp">${escapeHtml(msg.timestamp)}</span>
                             </div>
-                            <div class="content">
-                                <div class="message-text">${messageContent}</div>
-                                ${attachmentsHtml}
-                            </div>
+                            <div class="content">${escapeHtml(msg.content)}</div>
                         </div>
                     `;
                 });
@@ -502,13 +430,55 @@
 
         function showError(message) {
             const transcriptElement = document.getElementById('transcript');
+            let errorTitle = 'Access Denied';
+            let errorIcon = 'fa-shield-alt';
+            let errorDetails = '';
+            let errorColor = '#ff4444';
+
+            // Determine error type and customize message
+            if (message.includes('not authorized')) {
+                errorTitle = 'Unauthorized Access';
+                errorIcon = 'fa-user-shield';
+                errorDetails = `
+                    <div class="error-details">
+                        <p>This transcript belongs to another user.</p>
+                        <p>Only the ticket creator can access their transcripts.</p>
+                        <p class="error-tip">If this is your ticket, make sure you're logged in with the correct Discord account.</p>
+                    </div>`;
+                errorColor = '#ff4444';
+            } else if (message.includes('not found') || message.includes('expired')) {
+                errorTitle = 'Transcript Not Found';
+                errorIcon = 'fa-file-circle-xmark';
+                errorDetails = `
+                    <div class="error-details">
+                        <p>The requested transcript could not be found.</p>
+                        <p>This might be because:</p>
+                        <ul class="error-list">
+                            <li>The transcript has expired (24-hour limit)</li>
+                            <li>The ticket ID is invalid</li>
+                            <li>The transcript was deleted</li>
+                        </ul>
+                    </div>`;
+                errorColor = '#ffa500';
+            } else if (message.includes('No transcript ID')) {
+                errorTitle = 'Invalid Request';
+                errorIcon = 'fa-circle-exclamation';
+                errorDetails = `
+                    <div class="error-details">
+                        <p>No transcript ID was provided in the request.</p>
+                        <p>Please use the link provided in your Discord DMs.</p>
+                    </div>`;
+                errorColor = '#ffd700';
+            }
+
             transcriptElement.innerHTML = `
-                <div class="error-container">
-                    <div class="error-icon">
-                        <i class="fas fa-shield-alt"></i>
+                <div class="error-container" style="border-color: ${errorColor}">
+                    <div class="error-icon" style="color: ${errorColor}">
+                        <i class="fas ${errorIcon}"></i>
                     </div>
-                    <h2 class="error-title">Access Denied</h2>
+                    <h2 class="error-title">${errorTitle}</h2>
                     <p class="error-message">${message}</p>
+                    ${errorDetails}
                 </div>
             `;
         }
