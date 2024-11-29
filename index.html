@@ -251,6 +251,51 @@
         .content img:hover {
             transform: scale(1.02);
         }
+
+        .message-link {
+            color: #00b0f4;
+            text-decoration: none;
+        }
+
+        .message-link:hover {
+            text-decoration: underline;
+        }
+
+        .image-attachment {
+            margin-top: 8px;
+            max-width: 100%;
+        }
+
+        .image-attachment img {
+            max-width: 400px;
+            max-height: 300px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .image-attachment img:hover {
+            transform: scale(1.02);
+        }
+
+        .video-attachment {
+            margin-top: 8px;
+        }
+
+        .video-attachment video {
+            max-width: 400px;
+            max-height: 300px;
+            border-radius: 4px;
+        }
+
+        .file-attachment {
+            margin-top: 8px;
+        }
+
+        .message-text {
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
     </style>
 </head>
 <body>
@@ -366,25 +411,43 @@
                 
                 let html = '';
                 data.messages.forEach(msg => {
+                    let messageContent = msg.content;
+
+                    // Handle Discord links (like tenor.com)
+                    if (messageContent.includes('https://tenor.com')) {
+                        messageContent = messageContent.replace(
+                            /(https:\/\/tenor\.com\/[^\s]+)/g,
+                            '<a href="$1" target="_blank" class="message-link">$1</a>'
+                        );
+                    }
+
+                    // Handle image attachments
                     let attachmentsHtml = '';
                     if (msg.attachments && msg.attachments.length > 0) {
                         attachmentsHtml = msg.attachments.map(attachment => {
-                            // Check if it's an image
-                            if (attachment.contentType?.startsWith('image/')) {
-                                return `<img src="${escapeHtml(attachment.url)}" alt="${escapeHtml(attachment.name)}" style="max-width: 400px; max-height: 300px; border-radius: 4px; margin-top: 8px;">`;
+                            // For images
+                            if (attachment.url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+                                return `<div class="image-attachment">
+                                    <img src="${escapeHtml(attachment.url)}" 
+                                         alt="${escapeHtml(attachment.name)}" 
+                                         onclick="window.open('${escapeHtml(attachment.url)}', '_blank')">
+                                </div>`;
                             }
-                            // Check if it's a video
-                            else if (attachment.contentType?.startsWith('video/')) {
-                                return `
-                                    <video controls style="max-width: 400px; max-height: 300px; border-radius: 4px; margin-top: 8px;">
-                                        <source src="${escapeHtml(attachment.url)}" type="${escapeHtml(attachment.contentType)}">
+                            // For videos
+                            else if (attachment.url.match(/\.(mp4|webm|mov)$/i)) {
+                                return `<div class="video-attachment">
+                                    <video controls>
+                                        <source src="${escapeHtml(attachment.url)}" type="${attachment.contentType || 'video/mp4'}">
                                         Your browser does not support the video tag.
-                                    </video>`;
+                                    </video>
+                                </div>`;
                             }
-                            // For other files, show as link
-                            else {
-                                return `<a href="${escapeHtml(attachment.url)}" target="_blank" class="attachment-link" style="display: block; margin-top: 8px;">📎 ${escapeHtml(attachment.name)}</a>`;
-                            }
+                            // For other files
+                            return `<div class="file-attachment">
+                                <a href="${escapeHtml(attachment.url)}" target="_blank" class="attachment-link">
+                                    📎 ${escapeHtml(attachment.name)}
+                                </a>
+                            </div>`;
                         }).join('');
                     }
 
@@ -396,7 +459,7 @@
                                 <span class="timestamp">${escapeHtml(msg.timestamp)}</span>
                             </div>
                             <div class="content">
-                                ${escapeHtml(msg.content)}
+                                <div class="message-text">${messageContent}</div>
                                 ${attachmentsHtml}
                             </div>
                         </div>
