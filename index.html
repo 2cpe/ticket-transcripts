@@ -171,101 +171,95 @@
 
         .error-container {
             background-color: #2f3136;
-            border-radius: 8px;
-            padding: 40px 20px;
+            border-radius: 12px;
+            padding: 30px;
             text-align: center;
-            border: 1px solid #ff4444;
-            box-shadow: 0 0 10px rgba(255, 68, 68, 0.1);
+            border: 2px solid var(--error-color);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        .error-icon {
-            font-size: 48px;
-            color: #ff4444;
-            margin-bottom: 20px;
+        .error-content {
+            animation: fadeIn 0.4s ease-out;
         }
 
-        .error-icon i {
-            animation: pulse 2s infinite;
-        }
-
-        .error-title {
-            color: #ffffff;
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-
-        .error-message {
-            color: #dcddde;
-            font-size: 16px;
+        .error-header {
             margin-bottom: 25px;
-            line-height: 1.5;
         }
 
-        .error-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background-color: #5865F2;
-            color: white;
-            text-decoration: none;
-            padding: 12px 24px;
-            border-radius: 4px;
-            font-weight: 500;
-            transition: background-color 0.2s;
+        .error-icon-large {
+            font-size: 64px;
+            color: #ffa500;
+            margin: 20px 0;
+            animation: floatIcon 3s ease-in-out infinite;
         }
 
-        .error-button:hover {
-            background-color: #4752C4;
+        .error-subtitle {
+            color: #ffffff;
+            font-size: 20px;
+            margin: 15px 0;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        .error-details {
-            margin-top: 20px;
-            padding: 15px;
+        .error-explanation {
             background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 5px;
-            text-align: left;
-        }
-
-        .error-tip {
-            margin-top: 15px;
-            padding: 10px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            font-style: italic;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
         }
 
         .error-list {
-            list-style-type: none;
-            padding-left: 0;
-            margin: 10px 0;
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+            text-align: left;
         }
 
         .error-list li {
-            padding: 5px 0 5px 25px;
-            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            color: #dcddde;
         }
 
-        .error-list li:before {
-            content: "•";
-            position: absolute;
-            left: 10px;
-            color: var(--error-color);
+        .error-list li i {
+            margin-right: 10px;
+            color: #ffa500;
+            width: 20px;
+            text-align: center;
         }
 
-        .error-container {
-            --error-color: #ff4444;
-            animation: fadeIn 0.3s ease-in-out;
+        .error-tip {
+            background-color: rgba(255, 165, 0, 0.1);
+            border-left: 4px solid #ffa500;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            border-radius: 4px;
+        }
+
+        .error-tip i {
+            color: #ffa500;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        @keyframes floatIcon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { 
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
@@ -436,47 +430,42 @@
             let errorColor = '#ff4444';
 
             // Determine error type and customize message
-            if (message.includes('not authorized')) {
-                errorTitle = 'Unauthorized Access';
-                errorIcon = 'fa-user-shield';
-                errorDetails = `
-                    <div class="error-details">
-                        <p class="error-tip">If this is your ticket, make sure you're logged in with the correct account.</p>
-                    </div>`;
-                errorColor = '#ff4444';
-            } else if (message.includes('not found') || message.includes('expired')) {
+            if (message.includes('not found') || message.includes('expired')) {
                 errorTitle = 'Transcript Not Found';
                 errorIcon = 'fa-file-circle-xmark';
                 errorDetails = `
                     <div class="error-details">
-                        <p>The requested transcript could not be found.</p>
-                        <p>This might be because:</p>
-                        <ul class="error-list">
-                            <li>The transcript has expired (24-hour limit)</li>
-                            <li>The ticket ID is invalid</li>
-                            <li>The transcript was deleted</li>
-                        </ul>
+                        <div class="error-icon-large">
+                            <i class="fas fa-file-circle-xmark"></i>
+                        </div>
+                        <h3 class="error-subtitle">We couldn't find your transcript</h3>
+                        <div class="error-explanation">
+                            <p>This might be because:</p>
+                            <ul class="error-list">
+                                <li><i class="fas fa-clock"></i> The transcript has expired (24-hour limit)</li>
+                                <li><i class="fas fa-link-slash"></i> The link is invalid or broken</li>
+                                <li><i class="fas fa-trash-alt"></i> The transcript was deleted</li>
+                            </ul>
+                        </div>
+                        <div class="error-tip">
+                            <i class="fas fa-lightbulb"></i>
+                            <span>Try using the link from your most recent ticket closure</span>
+                        </div>
                     </div>`;
                 errorColor = '#ffa500';
-            } else if (message.includes('No transcript ID')) {
-                errorTitle = 'Invalid Request';
-                errorIcon = 'fa-circle-exclamation';
-                errorDetails = `
-                    <div class="error-details">
-                        <p>No transcript ID was provided in the request.</p>
-                        <p>Please use the link provided in your Discord DMs.</p>
-                    </div>`;
-                errorColor = '#ffd700';
             }
 
             transcriptElement.innerHTML = `
                 <div class="error-container" style="border-color: ${errorColor}">
-                    <div class="error-icon" style="color: ${errorColor}">
-                        <i class="fas ${errorIcon}"></i>
+                    <div class="error-content">
+                        <div class="error-header">
+                            <div class="error-icon" style="color: ${errorColor}">
+                                <i class="fas ${errorIcon}"></i>
+                            </div>
+                            <h2 class="error-title">${errorTitle}</h2>
+                        </div>
+                        ${errorDetails}
                     </div>
-                    <h2 class="error-title">${errorTitle}</h2>
-                    <p class="error-message">${message}</p>
-                    ${errorDetails}
                 </div>
             `;
         }

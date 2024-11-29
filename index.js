@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const { Client, GatewayIntentBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, PermissionFlagsBits, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
+const { Client, GatewayIntentBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, PermissionFlagsBits, ModalBuilder, TextInputBuilder, TextInputStyle, StringSelectMenuBuilder } = require('discord.js');
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -13,12 +13,20 @@ const client = new Client({
     ]
 });
 
+client.transcripts = new Map();
+
 const config = {
     token: process.env.BOT_TOKEN,
     adminRole: process.env.ADMIN_ROLE,
-    ticketCategory: process.env.TICKET_CATEGORY,
+    // ticketCategory: process.env.TICKET_CATEGORY,
     logsChannel: process.env.LOGS_CHANNEL,
-    ticketCloseLogs: process.env.TICKET_CLOSE_LOGS
+    ticketCloseLogs: process.env.TICKET_CLOSE_LOGS,
+    fifaCategory: process.env.FIFA_CATEGORY,
+    nitroCategory: process.env.NITRO_CATEGORY,
+    outfitCategory: process.env.OUTFIT_CATEGORY,
+    carCategory: process.env.CAR_CATEGORY,
+    boostCategory: process.env.BOOST_CATEGORY,
+    botCategory: process.env.BOT_CATEGORY
 };
 
 client.once('ready', () => {
@@ -33,21 +41,64 @@ client.on('messageCreate', async (message) => {
         const embed = new EmbedBuilder()
             .setDescription(`
             ### Need Assistance? 🎫
-            > Click the button below to create a ticket
-            > Our support team is here to help you
+            > Select a category below to create a ticket
+            > Our support team will assist you based on your selection
             
             *We aim to respond as quickly as possible*`)
             .setColor('#2b2d31')
-            .setThumbnail('https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png?ex=67498efb&is=67483d7b&hm=abf97f5dcad8ee9526594b5436731c398354f46e02b4cd3b23b070902be7e0a8&')
+            .setThumbnail('https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png')
+            .setImage('https://cdn.discordapp.com/attachments/1288807959685758987/1311863168565379083/ZZZZZZZZZZZZ.png')
             .setTimestamp();
 
         const row = new ActionRowBuilder()
             .addComponents(
-                new ButtonBuilder()
-                    .setCustomId('create_ticket')
-                    .setLabel('Create Ticket')
-                    .setEmoji('🎫')
-                    .setStyle(ButtonStyle.Secondary)
+                new StringSelectMenuBuilder()
+                    .setCustomId('ticket_category')
+                    .setPlaceholder('Select a category')
+                    .addOptions([
+                        {
+                            label: 'SUPPORT',
+                            description: 'General support and assistance',
+                            value: 'support',
+                            emoji: '🎫'
+                        },
+                        {
+                            label: 'FIFA',
+                            description: 'FIFA related support',
+                            value: 'fifa',
+                            emoji: '⚽'
+                        },
+                        {
+                            label: 'NITRO',
+                            description: 'Nitro related support',
+                            value: 'nitro',
+                            emoji: '🎮'
+                        },
+                        {
+                            label: 'OUTFIT',
+                            description: 'Outfit related support',
+                            value: 'outfit',
+                            emoji: '👕'
+                        },
+                        {
+                            label: 'CAR',
+                            description: 'Car related support',
+                            value: 'car',
+                            emoji: '🚗'
+                        },
+                        {
+                            label: 'BOOST',
+                            description: 'Boost related support',
+                            value: 'boost',
+                            emoji: '🚀'
+                        },
+                        {
+                            label: 'CUSTOM BOT',
+                            description: 'Custom bot development support',
+                            value: 'bot',
+                            emoji: '🤖'
+                        }
+                    ])
             );
 
         await message.channel.send({ 
@@ -57,74 +108,102 @@ client.on('messageCreate', async (message) => {
     }
 });
 
-// Handle button interactions
+// Update the interaction handler
 client.on('interactionCreate', async (interaction) => {
-    if (!interaction.isButton()) return;
-
-    if (interaction.customId === 'create_ticket') {
-        const ticketChannel = await createTicket(interaction);
-        if (ticketChannel) {
-            await interaction.reply({ 
-                embeds: [
-                    new EmbedBuilder()
-                        .setDescription(`
-                        ### Ticket Created Successfully! 🎫
-                        > Your ticket has been created at ${ticketChannel}
-                        > Our support team will assist you shortly
-                        
-                        *Please be patient while we review your ticket*`)
-                        .setColor('#2b2d31')
-                        .setThumbnail('https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png?ex=67498efb&is=67483d7b&hm=abf97f5dcad8ee9526594b5436731c398354f46e02b4cd3b23b070902be7e0a8&')
-                        .setTimestamp()
-                ],
-                ephemeral: true 
-            });
+    if (interaction.isButton()) {
+        if (interaction.customId === 'close_ticket') {
+            const member = interaction.guild.members.cache.get(interaction.user.id);
+            if (!member.roles.cache.has(config.adminRole)) {
+                return interaction.reply({ content: 'Only administrators can close tickets!', ephemeral: true });
+            }
+            await closeTicket(interaction);
         }
     }
 
-    if (interaction.customId === 'close_ticket') {
-        const member = interaction.guild.members.cache.get(interaction.user.id);
-        if (!member.roles.cache.has(config.adminRole)) {
-            return interaction.reply({ content: 'Only administrators can close tickets!', ephemeral: true });
+    // Add this section for handling select menu
+    if (interaction.isStringSelectMenu()) {
+        if (interaction.customId === 'ticket_category') {
+            try {
+                // Defer the reply immediately
+                await interaction.deferReply({ ephemeral: true });
+                
+                const category = interaction.values[0].toUpperCase();
+                const ticketChannel = await createTicket(interaction, category);
+                
+                if (ticketChannel) {
+                    await interaction.editReply({ 
+                        embeds: [
+                            new EmbedBuilder()
+                                .setDescription(`
+                                ### Ticket Created Successfully! 🎫
+                                > Your ${category} ticket has been created at ${ticketChannel}
+                                > Our support team will assist you shortly
+                                
+                                *Please be patient while we review your ticket*`)
+                                .setColor('#2b2d31')
+                                .setThumbnail('https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png')
+                                .setTimestamp()
+                        ]
+                    });
+                }
+            } catch (error) {
+                console.error('Error creating ticket:', error);
+                if (!interaction.replied && !interaction.deferred) {
+                    await interaction.reply({ 
+                        content: 'An error occurred while creating the ticket. Please try again.',
+                        ephemeral: true 
+                    });
+                } else {
+                    await interaction.editReply({ 
+                        content: 'An error occurred while creating the ticket. Please try again.' 
+                    });
+                }
+            }
         }
-        await closeTicket(interaction);
     }
 });
 
-async function createTicket(interaction) {
+async function createTicket(interaction, category) {
     const guild = interaction.guild;
     const user = interaction.user;
 
-    // Check if user already has an open ticket
+    // Check if user has any open tickets in any category
     const existingTicket = guild.channels.cache.find(
-        channel => channel.name === `ticket-${user.username.toLowerCase()}`
+        channel => {
+            // Check if channel name contains the user's name and is a ticket
+            return channel.name.toLowerCase().includes(user.username.toLowerCase()) && 
+                   channel.name.includes('-');
+        }
     );
 
     if (existingTicket) {
-        await interaction.reply({ 
+        const ticketCategory = existingTicket.name.split('-')[0].toUpperCase();
+        await interaction.editReply({ 
             embeds: [
                 new EmbedBuilder()
                     .setDescription(`
                     ### You Already Have an Open Ticket! ⚠️
-                    > Please use your existing ticket: ${existingTicket}
-                    > Close your current ticket before creating a new one
+                    > You have an active ${ticketCategory} ticket: ${existingTicket}
+                    > Please close your current ticket before creating a new one
                     
-                    *If you're having issues, contact an administrator*`)
+                    *You can only have one ticket open at a time*`)
                     .setColor('#ff0000')
-                    .setThumbnail('https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png?ex=67498efb&is=67483d7b&hm=abf97f5dcad8ee9526594b5436731c398354f46e02b4cd3b23b070902be7e0a8&')
+                    .setThumbnail('https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png')
                     .setTimestamp()
-            ],
-            ephemeral: true 
+            ]
         });
         return null;
     }
 
-    // Create the ticket channel if no existing ticket found
+    // Get category ID from config
+    const categoryId = config[`${category.toLowerCase()}Category`] || config.ticketCategory;
+
+    // Create the ticket channel
     const ticketChannel = await guild.channels.create({
-        name: `ticket-${user.username.toLowerCase()}`,
+        name: `${category.toLowerCase()}-${user.username.toLowerCase()}`,
         type: ChannelType.GuildText,
-        parent: config.ticketCategory,
-        topic: `Ticket Creator ID: ${user.id}`,
+        parent: categoryId,
+        topic: `Ticket Creator ID: ${user.id} | Category: ${category}`,
         permissionOverwrites: [
             {
                 id: guild.id,
@@ -143,12 +222,13 @@ async function createTicket(interaction) {
 
     const embed = new EmbedBuilder()
         .setAuthor({ 
-            name: 'Ticket Support',
-            iconURL: 'https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png?ex=67498efb&is=67483d7b&hm=abf97f5dcad8ee9526594b5436731c398354f46e02b4cd3b23b070902be7e0a8&'
+            name: `${category} Support Ticket`,
+            iconURL: 'https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png'
         })
         .setDescription(`
-        ### Welcome to your ticket! 👋
+        ### Welcome to your ${category} ticket! 👋
         > Ticket created by: ${user}
+        > Category: ${category}
         > Please describe your issue
         
         *A staff member will assist you shortly*`)
@@ -170,7 +250,7 @@ async function createTicket(interaction) {
     const mentionMessage = await ticketChannel.send(`<@&${config.adminRole}>`);
     setTimeout(() => {
         mentionMessage.delete().catch(console.error);
-    }, 1000); // Delete after 1 second
+    }, 1000);
 
     return ticketChannel;
 }
@@ -183,24 +263,23 @@ function generateUniqueId() {
 // Update the closeTicket function
 async function closeTicket(interaction) {
     try {
-        // Defer the reply immediately
         await interaction.deferReply({ ephemeral: true });
         
         const channel = interaction.channel;
-        
-        // Get user ID from channel topic
         const topic = channel.topic;
+        
         if (!topic) {
             await interaction.editReply({ content: 'Could not find ticket information.' });
             return;
         }
 
-        // Extract user ID from topic
-        const userId = topic.split(': ')[1];
-        if (!userId) {
+        const userIdMatch = topic.match(/Ticket Creator ID: (\d+)/);
+        if (!userIdMatch) {
             await interaction.editReply({ content: 'Could not find the ticket creator.' });
             return;
         }
+
+        const userId = userIdMatch[1];
 
         try {
             const user = await client.users.fetch(userId);
@@ -209,11 +288,11 @@ async function closeTicket(interaction) {
                 return;
             }
 
-            // Generate transcript and other operations...
+            // Generate transcript data
             const messages = await channel.messages.fetch();
             const transcriptId = generateUniqueId();
             
-            // Add this code for transcript generation
+            // Create and store transcript data
             const transcriptData = {
                 id: transcriptId,
                 title: channel.name,
@@ -225,45 +304,30 @@ async function closeTicket(interaction) {
                 }))
             };
 
-            // Save transcript to GitHub
-            await saveTranscript(transcriptData);
+            // Store transcript data and channel info
+            client.transcripts.set(channel.id, {
+                transcriptData,
+                transcriptId,
+                channelName: channel.name,
+                channelToDelete: channel,
+                user: user,
+                closer: interaction.user
+            });
 
-            // Send transcript link to user
-            const transcriptEmbed = new EmbedBuilder()
+            // Send rating request in the ticket channel
+            const ratingEmbed = new EmbedBuilder()
                 .setAuthor({ 
-                    name: 'Ticket Transcript',
+                    name: 'Ticket Rating',
                     iconURL: 'https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png'
                 })
                 .setDescription(`
-                ### 📝 Ticket Transcript Ready
-                > **Ticket:** \`${channel.name}\`
-                > Click the button below to view the transcript
+                ### Rate Your Experience 🌟
+                > Please rate your support experience from 1-5 stars
+                > Your feedback helps us improve our service
                 
-                *This transcript will be available for 24 hours*`)
+                *Click a button below to rate*`)
                 .setColor('#2b2d31')
                 .setTimestamp();
-
-            const row = new ActionRowBuilder()
-                .addComponents(
-                    new ButtonBuilder()
-                        .setLabel('View Transcript')
-                        .setStyle(ButtonStyle.Link)
-                        .setURL(`https://2cpe.github.io/ticket-transcripts/?id=${transcriptId}&userId=${userId}&creator=${userId}`)
-                        .setEmoji('📄')
-                );
-
-            // Send transcript embed to user
-            await user.send({
-                embeds: [transcriptEmbed],
-                components: [row]
-            });
-
-            // In the closeTicket function, after sending the transcript
-            // Add rating request
-            const ratingEmbed = new EmbedBuilder()
-                .setTitle('Ticket Rating')
-                .setDescription('Please rate your experience (1-5)')
-                .setColor('#ffff00');
 
             const ratingRow = new ActionRowBuilder()
                 .addComponents(
@@ -294,46 +358,18 @@ async function closeTicket(interaction) {
                         .setStyle(ButtonStyle.Secondary)
                 );
 
-            // Send rating request to user
-            await user.send({ 
+            // Send rating request in the ticket channel
+            await channel.send({ 
+                content: `${user}`,
                 embeds: [ratingEmbed], 
                 components: [ratingRow] 
             });
 
-            // Send close notification to logs channel
-            const closeLogsChannel = await client.channels.fetch(config.ticketCloseLogs);
-            const ticketCloseEmbed = new EmbedBuilder()
-                .setAuthor({ 
-                    name: 'Ticket Closed',
-                })
-                .setDescription(`
-                ### 🎫 Ticket Details
-                > **Channel:** \`${channel.name}\`
-                > **Status:** Closed
-                > **Action by:** ${interaction.user}
-                > **User:** ${user}
-                > **Date:** <t:${Math.floor(Date.now() / 1000)}:F>
-                
-                *Transcript has been sent to the user*`)
-                .setColor('#2b2d31')
-                .setThumbnail('https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png')
-                .setTimestamp();
-
-            await closeLogsChannel.send({
-                embeds: [ticketCloseEmbed]
+            // Update interaction with waiting message
+            await interaction.editReply({ 
+                content: 'Waiting for user to rate the ticket...',
+                ephemeral: true
             });
-
-            // Update interaction with success message
-            await interaction.editReply({ content: 'Ticket closed successfully!' });
-
-            // Delete the channel after a short delay
-            setTimeout(async () => {
-                try {
-                    await channel.delete();
-                } catch (error) {
-                    console.error('Error deleting channel:', error);
-                }
-            }, 1000);
 
         } catch (error) {
             console.error('Error in ticket closure:', error);
@@ -344,7 +380,6 @@ async function closeTicket(interaction) {
 
     } catch (error) {
         console.error('Error in closeTicket:', error);
-        // Only try to reply if the interaction hasn't been handled
         if (!interaction.replied && !interaction.deferred) {
             try {
                 await interaction.reply({ 
@@ -358,12 +393,23 @@ async function closeTicket(interaction) {
     }
 }
 
-// Update the rating buttons handler
+// Update the rating button handler
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isButton()) return;
     if (!interaction.customId.startsWith('rate_')) return;
 
     const rating = interaction.customId.split('_')[1];
+    const transcriptInfo = client.transcripts.get(interaction.channel.id);
+
+    if (!transcriptInfo) {
+        await interaction.reply({ content: 'Could not find ticket information.', ephemeral: true });
+        return;
+    }
+
+    if (interaction.user.id !== transcriptInfo.user.id) {
+        await interaction.reply({ content: 'Only the ticket creator can rate the ticket.', ephemeral: true });
+        return;
+    }
 
     // Create modal for feedback
     const modal = new ModalBuilder()
@@ -386,64 +432,145 @@ client.on('interactionCreate', async (interaction) => {
     await interaction.showModal(modal);
 });
 
-// Handle modal submit
+// Update the modal submit handler
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isModalSubmit()) return;
     if (!interaction.customId.startsWith('feedback_')) return;
 
-    const rating = interaction.customId.split('_')[1];
-    const feedback = interaction.fields.getTextInputValue('feedback_text');
-    const logsChannel = await client.channels.fetch(config.logsChannel);
+    try {
+        // Defer the reply immediately
+        await interaction.deferReply({ ephemeral: true });
 
-    // Get star emojis based on rating
-    const stars = '⭐'.repeat(parseInt(rating));
-    
-    // Choose image URL based on rating
-    let imageUrl;
-    if (rating >= 4) {
-        imageUrl = 'https://cdn.discordapp.com/attachments/1288807959685758987/1311791527533740124/RaZo_Thank_u.png?ex=674a2490&is=6748d310&hm=400037080f86f462ccb6f466b1d6ff69f02dc8511a5c8e712e9136ad6682c71f&';
-    } else if (rating >= 3) {
-        imageUrl = 'https://cdn.discordapp.com/attachments/1288807959685758987/1311791527533740124/RaZo_Thank_u.png?ex=674a2490&is=6748d310&hm=400037080f86f462ccb6f466b1d6ff69f02dc8511a5c8e712e9136ad6682c71f&';
-    } else {
-        imageUrl = 'https://cdn.discordapp.com/attachments/1288807959685758987/1311791527533740124/RaZo_Thank_u.png?ex=674a2490&is=6748d310&hm=400037080f86f462ccb6f466b1d6ff69f02dc8511a5c8e712e9136ad6682c71f&';
-    }
+        const rating = interaction.customId.split('_')[1];
+        const feedback = interaction.fields.getTextInputValue('feedback_text');
+        const logsChannel = await client.channels.fetch(config.logsChannel);
 
-    const ratingEmbed = new EmbedBuilder()
-        .setAuthor({ 
-            name: interaction.user.tag,
-            iconURL: interaction.user.displayAvatarURL({ dynamic: true })
-        })
-        .setDescription(`
-        > **Rating** ${stars}
-        > **Feedback: ${feedback}**
-        > *Thank you for your feedback!*`)
-        .setColor('#2b2d31')
-        .setImage(imageUrl)
-        .setThumbnail('https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png?ex=67498efb&is=67483d7b&hm=abf97f5dcad8ee9526594b5436731c398354f46e02b4cd3b23b070902be7e0a8&')
-        .setTimestamp();
+        // Get stored transcript data using channel ID instead of user ID
+        const transcriptInfo = client.transcripts.get(interaction.channel?.id);
+        if (!transcriptInfo) {
+            await interaction.editReply({ content: 'Could not find ticket information.' });
+            return;
+        }
 
-    // Send the mention and embed to logs channel
-    await logsChannel.send({ 
-        content: `${interaction.user}`,
-        embeds: [ratingEmbed] 
-    });
+        const { transcriptData, transcriptId, channelName, channelToDelete, user, closer } = transcriptInfo;
 
-    // Update the confirmation message in the modal submit handler
-    await interaction.reply({ 
-        embeds: [
-            new EmbedBuilder()
+        try {
+            // Save transcript to GitHub
+            await saveTranscript(transcriptData);
+
+            // Send rating embed to logs channel
+            const ratingEmbed = new EmbedBuilder()
+                .setAuthor({ 
+                    name: interaction.user.tag,
+                    iconURL: interaction.user.displayAvatarURL({ dynamic: true })
+                })
                 .setDescription(`
-                ### Thank you for your feedback! 🌟
-                > Your rating has been successfully recorded
-                > Our team appreciates your time and input
-                
-                *Your feedback helps us improve our services*`)
+                > **Rating** ${'⭐'.repeat(parseInt(rating))}
+                > **Feedback: ${feedback}**
+                > *Thank you for your feedback!*`)
                 .setColor('#2b2d31')
-                .setThumbnail('https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png?ex=67498efb&is=67483d7b&hm=abf97f5dcad8ee9526594b5436731c398354f46e02b4cd3b23b070902be7e0a8&')
-                .setTimestamp()
-        ],
-        ephemeral: true 
-    });
+                .setImage('https://cdn.discordapp.com/attachments/1288807959685758987/1311791527533740124/RaZo_Thank_u.png')
+                .setThumbnail('https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png')
+                .setTimestamp();
+
+            // Send rating to logs channel
+            await logsChannel.send({ 
+                content: `${interaction.user}`,
+                embeds: [ratingEmbed] 
+            });
+
+            // Send close notification to logs channel
+            const closeLogsChannel = await client.channels.fetch(config.ticketCloseLogs);
+            const ticketCloseEmbed = new EmbedBuilder()
+                .setAuthor({ 
+                    name: 'Ticket Closed',
+                })
+                .setDescription(`
+                ### 🎫 Ticket Details
+                > **Channel:** \`${channelName}\`
+                > **Status:** Closed
+                > **Action by:** ${closer}
+                > **User:** ${user}
+                > **Date:** <t:${Math.floor(Date.now() / 1000)}:F>
+                
+                *Transcript has been sent to the user*`)
+                .setColor('#2b2d31')
+                .setThumbnail('https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png')
+                .setTimestamp();
+
+            await closeLogsChannel.send({
+                embeds: [ticketCloseEmbed]
+            });
+
+            // Send transcript embed to user
+            const transcriptEmbed = new EmbedBuilder()
+                .setAuthor({ 
+                    name: 'Ticket Transcript',
+                    iconURL: 'https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png'
+                })
+                .setDescription(`
+                ### 📝 Ticket Transcript Ready
+                > **Ticket:** \`${channelName}\`
+                > Click the button below to view the transcript
+                
+                *This transcript will be available for 24 hours*`)
+                .setColor('#2b2d31')
+                .setTimestamp();
+
+            const transcriptRow = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setLabel('View Transcript')
+                        .setStyle(ButtonStyle.Link)
+                        .setURL(`https://2cpe.github.io/ticket-transcripts/?id=${transcriptId}&userId=${user.id}&creator=${user.id}`)
+                        .setEmoji('📄')
+                );
+
+            // Send transcript to user
+            await user.send({
+                embeds: [transcriptEmbed],
+                components: [transcriptRow]
+            });
+
+            // Clear stored transcript data
+            client.transcripts.delete(interaction.channel?.id);
+
+            // Delete the ticket channel
+            if (channelToDelete) {
+                setTimeout(async () => {
+                    try {
+                        await channelToDelete.delete();
+                    } catch (error) {
+                        console.error('Error deleting channel:', error);
+                    }
+                }, 1000);
+            }
+
+            // Update interaction with success message
+            await interaction.editReply({ 
+                content: 'Thank you for your feedback! Your transcript has been sent to your DMs.',
+            });
+
+        } catch (error) {
+            console.error('Error handling rating:', error);
+            await interaction.editReply({ 
+                content: 'An error occurred while processing your rating. Please try again.' 
+            });
+        }
+
+    } catch (error) {
+        console.error('Error in modal submit handler:', error);
+        if (!interaction.replied && !interaction.deferred) {
+            await interaction.reply({ 
+                content: 'An error occurred while processing your rating.',
+                ephemeral: true 
+            });
+        } else {
+            await interaction.editReply({ 
+                content: 'An error occurred while processing your rating.' 
+            });
+        }
+    }
 });
 
 // Update the saveTranscript function
