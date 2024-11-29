@@ -223,6 +223,34 @@
             50% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
+
+        .attachment-link {
+            color: #00b0f4;
+            text-decoration: none;
+            padding: 8px;
+            background: #2f3136;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .attachment-link:hover {
+            background: #36393f;
+            text-decoration: underline;
+        }
+
+        .content img, .content video {
+            display: block;
+            margin-top: 10px;
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .content img:hover {
+            transform: scale(1.02);
+        }
     </style>
 </head>
 <body>
@@ -338,6 +366,28 @@
                 
                 let html = '';
                 data.messages.forEach(msg => {
+                    let attachmentsHtml = '';
+                    if (msg.attachments && msg.attachments.length > 0) {
+                        attachmentsHtml = msg.attachments.map(attachment => {
+                            // Check if it's an image
+                            if (attachment.contentType?.startsWith('image/')) {
+                                return `<img src="${escapeHtml(attachment.url)}" alt="${escapeHtml(attachment.name)}" style="max-width: 400px; max-height: 300px; border-radius: 4px; margin-top: 8px;">`;
+                            }
+                            // Check if it's a video
+                            else if (attachment.contentType?.startsWith('video/')) {
+                                return `
+                                    <video controls style="max-width: 400px; max-height: 300px; border-radius: 4px; margin-top: 8px;">
+                                        <source src="${escapeHtml(attachment.url)}" type="${escapeHtml(attachment.contentType)}">
+                                        Your browser does not support the video tag.
+                                    </video>`;
+                            }
+                            // For other files, show as link
+                            else {
+                                return `<a href="${escapeHtml(attachment.url)}" target="_blank" class="attachment-link" style="display: block; margin-top: 8px;">📎 ${escapeHtml(attachment.name)}</a>`;
+                            }
+                        }).join('');
+                    }
+
                     html += `
                         <div class="message">
                             <div class="message-header">
@@ -345,7 +395,10 @@
                                 <span class="author">${escapeHtml(msg.author)}</span>
                                 <span class="timestamp">${escapeHtml(msg.timestamp)}</span>
                             </div>
-                            <div class="content">${escapeHtml(msg.content)}</div>
+                            <div class="content">
+                                ${escapeHtml(msg.content)}
+                                ${attachmentsHtml}
+                            </div>
                         </div>
                     `;
                 });

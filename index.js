@@ -221,7 +221,12 @@ async function closeTicket(interaction) {
                     author: msg.author.tag,
                     authorAvatar: msg.author.displayAvatarURL({ dynamic: true }),
                     content: msg.content,
-                    timestamp: msg.createdAt.toLocaleString()
+                    timestamp: msg.createdAt.toLocaleString(),
+                    attachments: Array.from(msg.attachments.values()).map(attachment => ({
+                        url: attachment.url,
+                        name: attachment.name,
+                        contentType: attachment.contentType // For determining if it's image/video
+                    }))
                 }))
             };
 
