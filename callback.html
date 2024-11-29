@@ -85,11 +85,16 @@
                 const userData = await userResponse.json();
                 localStorage.setItem('discord_user', JSON.stringify(userData));
 
-                // Redirect back to transcript page
-                const [transcriptId, userId] = state ? state.split('_') : [];
-                if (transcriptId && userId) {
+                // Get the return URL from localStorage or build it from state
+                const returnUrl = localStorage.getItem('return_url');
+                if (returnUrl && returnUrl.includes('id=')) {
+                    window.location.href = returnUrl;
+                } else if (state && state !== 'login') {
+                    // Handle state containing transcript info
+                    const [transcriptId, userId] = state.split('_');
                     window.location.href = `https://2cpe.github.io/ticket-transcripts/?id=${transcriptId}&userId=${userId}&creator=${userId}`;
                 } else {
+                    // Fallback to home page
                     window.location.href = 'https://2cpe.github.io/ticket-transcripts/';
                 }
             } catch (error) {

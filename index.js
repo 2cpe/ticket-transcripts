@@ -180,213 +180,181 @@ function generateUniqueId() {
     return Math.random().toString(36).substring(2, 15);
 }
 
-// Update the transcript part in the closeTicket function
+// Update the closeTicket function
 async function closeTicket(interaction) {
-    const channel = interaction.channel;
-    
-    let userId;
     try {
-        const ticketUser = channel.name.split('-').slice(1).join('-');
-        const guildMember = interaction.guild.members.cache.find(
-            member => member.user.username.toLowerCase() === ticketUser.toLowerCase()
-        );
+        // Defer the reply immediately
+        await interaction.deferReply({ ephemeral: true });
         
-        if (!guildMember) {
-            await interaction.reply({ content: 'Could not find the ticket creator.', ephemeral: true });
+        const channel = interaction.channel;
+        
+        // Get user ID from channel topic
+        const topic = channel.topic;
+        if (!topic) {
+            await interaction.editReply({ content: 'Could not find ticket information.' });
             return;
         }
-        
-        userId = guildMember.id;
-    } catch (error) {
-        console.error('Error finding user:', error);
-        await interaction.reply({ content: 'An error occurred while closing the ticket.', ephemeral: true });
-        return;
-    }
 
-    try {
-        const user = await client.users.fetch(userId);
-        
-        // Generate HTML transcript
-        const messages = await channel.messages.fetch();
-        const transcriptId = generateUniqueId();
-        let transcript = `<!DOCTYPE html>
-        <html>
-        <head>
-            <title>Ticket Transcript</title>
-            <style>
-                body { 
-                    font-family: Arial, sans-serif; 
-                    margin: 20px;
-                    background-color: #36393f;
-                    color: #dcddde;
-                }
-                .message { 
-                    margin: 10px 0; 
-                    padding: 10px; 
-                    border-bottom: 1px solid #40444b;
-                    background-color: #2f3136;
-                    border-radius: 5px;
-                }
-                .author { 
-                    font-weight: bold; 
-                    color: #ffffff;
-                }
-                .timestamp { 
-                    color: #72767d; 
-                    font-size: 0.8em; 
-                    margin-left: 10px;
-                }
-                .content {
-                    margin-top: 5px;
-                    white-space: pre-wrap;
-                }
-                h1 {
-                    color: #ffffff;
-                    text-align: center;
-                    padding: 20px;
-                    background-color: #2f3136;
-                    border-radius: 5px;
-                }
-            </style>
-        </head>
-        <body>
-        <h1>Ticket Transcript: ${channel.name}</h1>`;
+        // Extract user ID from topic
+        const userId = topic.split(': ')[1];
+        if (!userId) {
+            await interaction.editReply({ content: 'Could not find the ticket creator.' });
+            return;
+        }
 
-        messages.reverse().forEach(msg => {
-            transcript += `
-            <div class="message">
-                <div>
-                    <span class="author">${msg.author.tag}</span>
-                    <span class="timestamp">${msg.createdAt.toLocaleString()}</span>
-                </div>
-                <div class="content">${msg.content}</div>
-            </div>`;
-        });
-
-        transcript += '</body></html>';
-
-        // Create transcript embed with button
-        const transcriptEmbed = new EmbedBuilder()
-            .setAuthor({ 
-                name: 'Ticket Transcript',
-                iconURL: 'https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png?ex=67498efb&is=67483d7b&hm=abf97f5dcad8ee9526594b5436731c398354f46e02b4cd3b23b070902be7e0a8&'
-            })
-            .setDescription(`
-            ### 📝 Ticket Transcript Ready
-            > **Ticket:** \`${channel.name}\`
-            > Click the button below to view the transcript
-            
-            *This transcript will be available for 24 hours*`)
-            .setColor('#2b2d31')
-            .setTimestamp();
-
-        const row = new ActionRowBuilder()
-            .addComponents(
-                new ButtonBuilder()
-                    .setLabel('View Transcript')
-                    .setStyle(ButtonStyle.Link)
-                    .setURL(`https://2cpe.github.io/ticket-transcripts?id=${transcriptId}&userId=${user.id}&creator=${user.id}`)
-                    .setEmoji('📄')
-            );
-
-        // Send transcript embed to user
-        await user.send({
-            embeds: [transcriptEmbed],
-            components: [row]
-        });
-
-        // Update the rating embed section
-        const ratingEmbed = new EmbedBuilder()
-            .setTitle('Ticket Rating')
-            .setDescription('Please rate your experience and provide feedback')
-            .setColor('#ffff00')
-            .setFooter({ text: 'Click a rating to provide detailed feedback' });
-
-        const ratingRow = new ActionRowBuilder()
-            .addComponents(
-                new ButtonBuilder()
-                    .setCustomId('rate_1')
-                    .setLabel('1')
-                    .setEmoji('⭐')
-                    .setStyle(ButtonStyle.Secondary),
-                new ButtonBuilder()
-                    .setCustomId('rate_2')
-                    .setLabel('2')
-                    .setEmoji('⭐')
-                    .setStyle(ButtonStyle.Secondary),
-                new ButtonBuilder()
-                    .setCustomId('rate_3')
-                    .setLabel('3')
-                    .setEmoji('⭐')
-                    .setStyle(ButtonStyle.Secondary),
-                new ButtonBuilder()
-                    .setCustomId('rate_4')
-                    .setLabel('4')
-                    .setEmoji('⭐')
-                    .setStyle(ButtonStyle.Secondary),
-                new ButtonBuilder()
-                    .setCustomId('rate_5')
-                    .setLabel('5')
-                    .setEmoji('⭐')
-                    .setStyle(ButtonStyle.Secondary)
-            );
-
-        await user.send({ embeds: [ratingEmbed], components: [ratingRow] });
-
-        // Only send a simple notification to logs channel
-        const closeLogsChannel = await client.channels.fetch(config.ticketCloseLogs);
-        const ticketCloseEmbed = new EmbedBuilder()
-            .setAuthor({ 
-                name: 'Ticket Closed',
-            })
-            .setDescription(`
-            ### 🎫 Ticket Details
-            > **Channel:** \`${channel.name}\`
-            > **Status:** Closed
-            > **Action by:** ${interaction.user}
-            > **User:** ${user}
-            > **Date:** <t:${Math.floor(Date.now() / 1000)}:F>
-            
-            *Transcript has been sent to the user*`)
-            .setColor('#2b2d31')
-            .setThumbnail('https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png?ex=67498efb&is=67483d7b&hm=abf97f5dcad8ee9526594b5436731c398354f46e02b4cd3b23b070902be7e0a8&')
-            .setTimestamp();
-
-        await closeLogsChannel.send({
-            embeds: [ticketCloseEmbed]
-        });
-
-        // Notify that the ticket is being closed
-        await interaction.reply({ content: 'Closing ticket...', ephemeral: true });
-        
-        // Delete the ticket channel
-        await channel.delete();
-
-        // In the closeTicket function, before sending the transcript
-        const transcriptData = {
-            id: transcriptId,
-            title: channel.name,
-            messages: messages.reverse().map(msg => ({
-                author: msg.author.tag,
-                authorAvatar: msg.author.displayAvatarURL({ dynamic: true }),
-                content: msg.content,
-                timestamp: msg.createdAt.toLocaleString()
-            }))
-        };
-
-        // Save transcript using GitHub API
         try {
+            const user = await client.users.fetch(userId);
+            if (!user) {
+                await interaction.editReply({ content: 'Could not find the ticket creator.' });
+                return;
+            }
+
+            // Generate transcript and other operations...
+            const messages = await channel.messages.fetch();
+            const transcriptId = generateUniqueId();
+            
+            // Add this code for transcript generation
+            const transcriptData = {
+                id: transcriptId,
+                title: channel.name,
+                messages: messages.reverse().map(msg => ({
+                    author: msg.author.tag,
+                    authorAvatar: msg.author.displayAvatarURL({ dynamic: true }),
+                    content: msg.content,
+                    timestamp: msg.createdAt.toLocaleString()
+                }))
+            };
+
+            // Save transcript to GitHub
             await saveTranscript(transcriptData);
+
+            // Send transcript link to user
+            const transcriptEmbed = new EmbedBuilder()
+                .setAuthor({ 
+                    name: 'Ticket Transcript',
+                    iconURL: 'https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png'
+                })
+                .setDescription(`
+                ### 📝 Ticket Transcript Ready
+                > **Ticket:** \`${channel.name}\`
+                > Click the button below to view the transcript
+                
+                *This transcript will be available for 24 hours*`)
+                .setColor('#2b2d31')
+                .setTimestamp();
+
+            const row = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setLabel('View Transcript')
+                        .setStyle(ButtonStyle.Link)
+                        .setURL(`https://2cpe.github.io/ticket-transcripts/?id=${transcriptId}&userId=${userId}&creator=${userId}`)
+                        .setEmoji('📄')
+                );
+
+            // Send transcript embed to user
+            await user.send({
+                embeds: [transcriptEmbed],
+                components: [row]
+            });
+
+            // In the closeTicket function, after sending the transcript
+            // Add rating request
+            const ratingEmbed = new EmbedBuilder()
+                .setTitle('Ticket Rating')
+                .setDescription('Please rate your experience (1-5)')
+                .setColor('#ffff00');
+
+            const ratingRow = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId('rate_1')
+                        .setLabel('1')
+                        .setEmoji('⭐')
+                        .setStyle(ButtonStyle.Secondary),
+                    new ButtonBuilder()
+                        .setCustomId('rate_2')
+                        .setLabel('2')
+                        .setEmoji('⭐')
+                        .setStyle(ButtonStyle.Secondary),
+                    new ButtonBuilder()
+                        .setCustomId('rate_3')
+                        .setLabel('3')
+                        .setEmoji('⭐')
+                        .setStyle(ButtonStyle.Secondary),
+                    new ButtonBuilder()
+                        .setCustomId('rate_4')
+                        .setLabel('4')
+                        .setEmoji('⭐')
+                        .setStyle(ButtonStyle.Secondary),
+                    new ButtonBuilder()
+                        .setCustomId('rate_5')
+                        .setLabel('5')
+                        .setEmoji('⭐')
+                        .setStyle(ButtonStyle.Secondary)
+                );
+
+            // Send rating request to user
+            await user.send({ 
+                embeds: [ratingEmbed], 
+                components: [ratingRow] 
+            });
+
+            // Send close notification to logs channel
+            const closeLogsChannel = await client.channels.fetch(config.ticketCloseLogs);
+            const ticketCloseEmbed = new EmbedBuilder()
+                .setAuthor({ 
+                    name: 'Ticket Closed',
+                })
+                .setDescription(`
+                ### 🎫 Ticket Details
+                > **Channel:** \`${channel.name}\`
+                > **Status:** Closed
+                > **Action by:** ${interaction.user}
+                > **User:** ${user}
+                > **Date:** <t:${Math.floor(Date.now() / 1000)}:F>
+                
+                *Transcript has been sent to the user*`)
+                .setColor('#2b2d31')
+                .setThumbnail('https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png')
+                .setTimestamp();
+
+            await closeLogsChannel.send({
+                embeds: [ticketCloseEmbed]
+            });
+
+            // Update interaction with success message
+            await interaction.editReply({ content: 'Ticket closed successfully!' });
+
+            // Delete the channel after a short delay
+            setTimeout(async () => {
+                try {
+                    await channel.delete();
+                } catch (error) {
+                    console.error('Error deleting channel:', error);
+                }
+            }, 1000);
+
         } catch (error) {
-            console.error('Error saving transcript:', error);
+            console.error('Error in ticket closure:', error);
+            await interaction.editReply({ 
+                content: 'An error occurred while closing the ticket. Please try again.' 
+            });
         }
 
     } catch (error) {
-        console.error('Error handling ticket closure:', error);
-        await interaction.reply({ 
-            content: 'An error occurred while processing the ticket closure.', 
-            ephemeral: true 
-        });
+        console.error('Error in closeTicket:', error);
+        // Only try to reply if the interaction hasn't been handled
+        if (!interaction.replied && !interaction.deferred) {
+            try {
+                await interaction.reply({ 
+                    content: 'An error occurred while processing the ticket closure.', 
+                    ephemeral: true 
+                });
+            } catch (e) {
+                console.error('Error sending error message:', e);
+            }
+        }
     }
 }
 
