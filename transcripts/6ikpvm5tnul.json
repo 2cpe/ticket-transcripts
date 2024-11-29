@@ -1,0 +1,47 @@
+{
+  "id": "6ikpvm5tnul",
+  "title": "ticket-0oxx",
+  "messages": [
+    {
+      "author": "Ticket Test#1036",
+      "authorAvatar": "https://cdn.discordapp.com/embed/avatars/1.png",
+      "content": "",
+      "timestamp": "11/29/2024, 4:06:45 AM",
+      "attachments": []
+    },
+    {
+      "author": "8hrk",
+      "authorAvatar": "https://cdn.discordapp.com/avatars/1232027856196993154/cfa3e015a5b01139bcfc0c2ccd313df8.webp",
+      "content": "dwa",
+      "timestamp": "11/29/2024, 4:06:56 AM",
+      "attachments": []
+    },
+    {
+      "author": "8hrk",
+      "authorAvatar": "https://cdn.discordapp.com/avatars/1232027856196993154/cfa3e015a5b01139bcfc0c2ccd313df8.webp",
+      "content": "https://tenor.com/view/ejen-ali-sleepy-sleepy-head-sleepy-eyes-sleep-gif-4810267325903215782",
+      "timestamp": "11/29/2024, 4:06:58 AM",
+      "attachments": []
+    },
+    {
+      "author": "8hrk",
+      "authorAvatar": "https://cdn.discordapp.com/avatars/1232027856196993154/cfa3e015a5b01139bcfc0c2ccd313df8.webp",
+      "content": "",
+      "timestamp": "11/29/2024, 4:07:03 AM",
+      "attachments": [
+        {
+          "url": "https://cdn.discordapp.com/attachments/1311860872335065158/1311860950625816586/image.png?ex=674a6537&is=674913b7&hm=d87aa691c9cc901e08eb3c2199c0516415c2c30e5219318cbe0a864bcde61a44&",
+          "name": "image.png",
+          "contentType": "image/png"
+        }
+      ]
+    },
+    {
+      "author": "8hrk",
+      "authorAvatar": "https://cdn.discordapp.com/avatars/1232027856196993154/cfa3e015a5b01139bcfc0c2ccd313df8.webp",
+      "content": "Error in closeTicket: Error [InteractionAlreadyReplied]: The reply to this interaction has already been sent or deferred.\n    at ButtonInteraction.deferReply (C:\\Users\\pc\\Desktop\\Ticketbot\\node_modules\\discord.js\\src\\structures\\interfaces\\InteractionResponses.js:70:46)\n    at closeTicket (C:\\Users\\pc\\Desktop\\Ticketbot\\index.js:203:27)\n    at Client.<anonymous> (C:\\Users\\pc\\Desktop\\Ticketbot\\index.js:93:19)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) {\n  code: 'InteractionAlreadyReplied'\n}",
+      "timestamp": "11/29/2024, 4:07:27 AM",
+      "attachments": []
+    }
+  ]
+}
