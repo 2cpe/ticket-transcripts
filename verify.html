@@ -71,8 +71,8 @@
 
         verifyButton.href = `https://discord.com/api/oauth2/authorize` +
             `?client_id=1311786215909101718` +
-            `&redirect_uri=${encodeURIComponent('https://2cpe.github.io/ticket-transcripts/dashboard.html')}` +
-            `&response_type=token` +
+            `&redirect_uri=${encodeURIComponent('https://2cpe.github.io/ticket-transcripts/callback.html')}` +
+            `&response_type=code` +
             `&scope=identify` +
             `&state=${transcriptId}_${userId}`;
     </script>
