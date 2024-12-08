@@ -577,6 +577,16 @@
                 document.getElementById('skeletonLoader').style.display = 'block';
                 document.querySelector('.container').style.display = 'none';
 
+                // Get the encryption key from the server
+                const keyResponse = await fetch('/api/get-key', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('discord_token')}`
+                    }
+                });
+                
+                if (!keyResponse.ok) throw new Error('Failed to get decryption key');
+                const { key } = await keyResponse.json();
+
                 // Parallel fetch for user data and tickets
                 const token = localStorage.getItem('discord_token');
                 const [userResponse, ticketsResponse] = await Promise.all([
@@ -608,13 +618,20 @@
                         const response = await fetch(file.download_url);
                         if (!response.ok) return null;
                         
-                        const ticketData = await response.json();
-                        const ticketCreatorId = ticketData.creatorId || 
-                            ticketData.userId || 
-                            ticketData.title.split('-').pop();
-
-                        if (ticketCreatorId === userData.id) {
-                            return ticketData;
+                        const encryptedTicket = await response.json();
+                        
+                        // Only attempt to decrypt if this ticket belongs to the user
+                        if (encryptedTicket.creatorId === userData.id) {
+                            const decryptedData = decryptData(
+                                encryptedTicket.encryptedData,
+                                encryptedTicket.iv,
+                                encryptedTicket.authTag,
+                                key
+                            );
+                            
+                            if (decryptedData) {
+                                return decryptedData;
+                            }
                         }
                         return null;
                     });
@@ -789,6 +806,27 @@
                 loadTickets(); // This will update the cache in the background
             }
         };
+
+        // Add these functions to handle decryption
+        function decryptData(encryptedData, iv, authTag, key) {
+            try {
+                const decipher = crypto.createDecipheriv(
+                    'aes-256-gcm', 
+                    Buffer.from(key, 'hex'), 
+                    Buffer.from(iv, 'hex')
+                );
+                
+                decipher.setAuthTag(Buffer.from(authTag, 'hex'));
+                
+                let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
+                decrypted += decipher.final('utf8');
+                
+                return JSON.parse(decrypted);
+            } catch (error) {
+                console.error('Decryption failed:', error);
+                return null;
+            }
+        }
     </script>
 </body>
 </html> 
