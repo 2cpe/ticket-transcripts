@@ -295,6 +295,106 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Skeleton Loading Animation Styles */
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, 
+                rgba(47, 49, 54, 0.95) 25%, 
+                rgba(55, 57, 62, 0.95) 37%, 
+                rgba(47, 49, 54, 0.95) 63%
+            );
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite linear;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .skeleton-card {
+            height: 200px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skeleton-header {
+            height: 24px;
+            width: 70%;
+            margin-bottom: 15px;
+            border-radius: 6px;
+        }
+
+        .skeleton-date {
+            height: 18px;
+            width: 30%;
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            border-radius: 4px;
+        }
+
+        .skeleton-content {
+            height: 60px;
+            margin: 15px 0;
+            border-radius: 6px;
+        }
+
+        .skeleton-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .skeleton-category {
+            height: 28px;
+            width: 80px;
+            border-radius: 6px;
+        }
+
+        .skeleton-button {
+            height: 36px;
+            width: 120px;
+            border-radius: 6px;
+        }
+
+        .skeleton-user {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .skeleton-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+        }
+
+        .skeleton-details {
+            flex: 1;
+        }
+
+        .skeleton-name {
+            height: 24px;
+            width: 150px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+        }
+
+        .skeleton-id {
+            height: 18px;
+            width: 100px;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -332,9 +432,16 @@
         </div>
 
         <div id="ticketsContainer" class="tickets-container">
-            <div class="loading">
-                <i class="fas fa-circle-notch"></i>
-                Loading tickets...
+            <div class="skeleton-loading">
+                <div class="ticket-card skeleton-card skeleton">
+                    <div class="skeleton-header"></div>
+                    <div class="skeleton-date"></div>
+                    <div class="skeleton-content"></div>
+                    <div class="skeleton-footer">
+                        <div class="skeleton-category"></div>
+                        <div class="skeleton-button"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -378,6 +485,30 @@
 
         async function loadTickets() {
             try {
+                // Show skeleton loading
+                const skeletonHTML = Array(6).fill(`
+                    <div class="ticket-card skeleton-card skeleton">
+                        <div class="skeleton-header"></div>
+                        <div class="skeleton-date"></div>
+                        <div class="skeleton-content"></div>
+                        <div class="skeleton-footer">
+                            <div class="skeleton-category"></div>
+                            <div class="skeleton-button"></div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                document.getElementById('ticketsContainer').innerHTML = skeletonHTML;
+
+                // Also update user info with skeleton loading
+                document.getElementById('userAvatar').classList.add('skeleton');
+                document.querySelector('.user-details').innerHTML = `
+                    <div class="skeleton-details">
+                        <div class="skeleton-name skeleton"></div>
+                        <div class="skeleton-id skeleton"></div>
+                    </div>
+                `;
+
                 // Get current user's ID
                 const token = localStorage.getItem('discord_token');
                 const userResponse = await fetch('https://discord.com/api/users/@me', {
@@ -402,10 +533,9 @@
                         const ticketResponse = await fetch(file.download_url);
                         const ticketData = await ticketResponse.json();
                         
-                        // Only add ticket if it belongs to the current user
-                        const ticketCreatorId = ticketData.creatorId || // Check if creatorId exists in ticket data
-                            ticketData.userId || // Fallback to userId if exists
-                            ticketData.title.split('-').pop(); // Last resort: extract from title if formatted as "category-username-userid"
+                        const ticketCreatorId = ticketData.creatorId || 
+                            ticketData.userId || 
+                            ticketData.title.split('-').pop();
                         
                         if (ticketCreatorId === currentUserId) {
                             userTickets.push(ticketData);
@@ -413,14 +543,20 @@
                     }
                 }
 
-                // Sort tickets by date (newest first)
+                // Sort tickets
                 userTickets.sort((a, b) => {
                     const dateA = new Date(a.messages[0].timestamp);
                     const dateB = new Date(b.messages[0].timestamp);
                     return dateB - dateA;
                 });
 
+                // Remove skeleton classes from user info
+                document.getElementById('userAvatar').classList.remove('skeleton');
+                displayUserInfo(userData);
+
+                // Display tickets (removes skeleton loading)
                 displayTickets(userTickets);
+
             } catch (error) {
                 console.error('Error loading tickets:', error);
                 document.getElementById('ticketsContainer').innerHTML = `
