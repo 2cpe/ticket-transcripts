@@ -5,6 +5,14 @@
             "src": "/api/auth",
             "methods": ["POST", "OPTIONS"],
             "dest": "/api/auth.js"
+        },
+        {
+            "src": "/api/get-transcript",
+            "methods": ["GET", "OPTIONS"],
+            "dest": "/api/get-transcript.js"
         }
-    ]
+    ],
+    "env": {
+        "ENCRYPTION_KEY": "@transcript_encryption_key"
+    }
 } 
