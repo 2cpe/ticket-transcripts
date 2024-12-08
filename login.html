@@ -4,13 +4,184 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Ticket Transcripts</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Copy the style from verify.html */
+        :root {
+            --primary-color: #5865F2;
+            --background-dark: #36393f;
+            --background-darker: #2f3136;
+            --text-color: #dcddde;
+            --border-color: #40444b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-dark);
+            color: var(--text-color);
+            line-height: 1.6;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #2b2d31 0%, #1a1b1e 100%);
+        }
+
+        .container {
+            background-color: rgba(47, 49, 54, 0.95);
+            padding: 50px 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 420px;
+            width: 90%;
+            position: relative;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .icon-wrapper {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 30px;
+        }
+
+        .icon {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 140%;
+            height: 140%;
+            background: radial-gradient(circle, rgba(88, 101, 242, 0.2) 0%, rgba(88, 101, 242, 0) 70%);
+            z-index: -1;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.3; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+        }
+
+        .title {
+            color: #ffffff;
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 700;
+            background: linear-gradient(45deg, #fff, #dcddde);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 0.5px;
+        }
+
+        .description {
+            color: #b9bbbe;
+            margin-bottom: 35px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .button {
+            background: linear-gradient(45deg, #5865F2, #4752C4);
+            color: white;
+            padding: 15px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .button:hover::before {
+            left: 100%;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(88, 101, 242, 0.4);
+        }
+
+        .button i {
+            font-size: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 40px 25px;
+            }
+
+            .icon-wrapper {
+                width: 120px;
+                height: 120px;
+                margin-bottom: 25px;
+            }
+
+            .title {
+                font-size: 28px;
+            }
+
+            .description {
+                font-size: 15px;
+                margin-bottom: 30px;
+            }
+
+            .button {
+                padding: 14px 28px;
+                font-size: 15px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <img src="https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png" alt="Logo" class="icon">
+        <div class="icon-wrapper">
+            <div class="glow"></div>
+            <img src="https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png" alt="Logo" class="icon">
+        </div>
         <h1 class="title">Ticket Transcripts</h1>
         <p class="description">Please login with Discord to view your ticket transcripts</p>
         <a href="#" class="button" id="loginButton">
