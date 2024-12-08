@@ -336,36 +336,143 @@
                 margin-bottom: 15px;
             }
         }
+
+        /* Skeleton Animation */
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, 
+                rgba(47, 49, 54, 0.95) 25%, 
+                rgba(55, 57, 62, 0.95) 37%, 
+                rgba(47, 49, 54, 0.95) 63%
+            );
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite linear;
+            border-radius: 8px;
+        }
+
+        .skeleton-header {
+            height: 200px;
+            margin-bottom: 25px;
+        }
+
+        .skeleton-info-bar {
+            height: 60px;
+            margin-bottom: 25px;
+        }
+
+        .skeleton-message {
+            height: 120px;
+            margin: 15px 0;
+        }
+
+        .skeleton-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+
+        .skeleton-text {
+            flex: 1;
+        }
+
+        .skeleton-text-line {
+            height: 12px;
+            margin: 6px 0;
+            border-radius: 4px;
+        }
+
+        .skeleton-text-line:last-child {
+            width: 80%;
+        }
+
+        .skeleton-message-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .skeleton-content {
+            margin-left: 52px;
+        }
+
+        .skeleton-wrapper {
+            background: rgba(47, 49, 54, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
+        <div class="header skeleton" id="headerSkeleton">
             <div class="header-top">
-                <a href="dashboard.html" class="back-btn">
-                    <i class="fas fa-arrow-left"></i> Back to Dashboard
-                </a>
-                <img src="https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png" alt="Logo">
+                <div class="skeleton skeleton-text-line" style="width: 150px;"></div>
             </div>
-            <h1>Ticket Transcript</h1>
-            <p>A record of your support conversation</p>
+            <div class="skeleton skeleton-text-line" style="width: 200px; margin: 20px auto;"></div>
+            <div class="skeleton skeleton-text-line" style="width: 300px; margin: 10px auto;"></div>
         </div>
 
-        <div class="info-bar">
-            <div class="info-item">
-                <i class="fas fa-ticket-alt"></i>
-                <span id="ticket-id">Loading ticket information...</span>
-            </div>
-            <div class="info-item">
-                <i class="far fa-clock"></i>
-                <span id="transcript-date"></span>
-            </div>
+        <div class="info-bar skeleton" id="infoBarSkeleton">
+            <div class="skeleton skeleton-text-line" style="width: 200px;"></div>
+            <div class="skeleton skeleton-text-line" style="width: 150px;"></div>
         </div>
 
         <div id="transcript">
-            <div class="loading">
-                <i class="fas fa-circle-notch"></i>
-                Loading transcript...
+            <div class="skeleton-wrapper">
+                <div class="skeleton-message">
+                    <div class="skeleton-message-header">
+                        <div class="skeleton skeleton-avatar"></div>
+                        <div class="skeleton-text">
+                            <div class="skeleton skeleton-text-line"></div>
+                            <div class="skeleton skeleton-text-line"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-content">
+                        <div class="skeleton skeleton-text-line"></div>
+                        <div class="skeleton skeleton-text-line"></div>
+                        <div class="skeleton skeleton-text-line"></div>
+                    </div>
+                </div>
+                <div class="skeleton-message">
+                    <div class="skeleton-message-header">
+                        <div class="skeleton skeleton-avatar"></div>
+                        <div class="skeleton-text">
+                            <div class="skeleton skeleton-text-line"></div>
+                            <div class="skeleton skeleton-text-line"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-content">
+                        <div class="skeleton skeleton-text-line"></div>
+                        <div class="skeleton skeleton-text-line"></div>
+                    </div>
+                </div>
+                <div class="skeleton-message">
+                    <div class="skeleton-message-header">
+                        <div class="skeleton skeleton-avatar"></div>
+                        <div class="skeleton-text">
+                            <div class="skeleton skeleton-text-line"></div>
+                            <div class="skeleton skeleton-text-line"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-content">
+                        <div class="skeleton skeleton-text-line"></div>
+                        <div class="skeleton skeleton-text-line"></div>
+                        <div class="skeleton skeleton-text-line"></div>
+                        <div class="skeleton skeleton-text-line"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -424,6 +531,54 @@
             const transcriptId = getTranscriptId();
             const userId = getQueryParam('userId');
             const ticketCreator = getQueryParam('creator');
+
+            // Show skeleton loading
+            document.getElementById('transcript').innerHTML = `
+                <div class="skeleton-wrapper">
+                    <div class="skeleton-message">
+                        <div class="skeleton-message-header">
+                            <div class="skeleton skeleton-avatar"></div>
+                            <div class="skeleton-text">
+                                <div class="skeleton skeleton-text-line"></div>
+                                <div class="skeleton skeleton-text-line"></div>
+                            </div>
+                        </div>
+                        <div class="skeleton-content">
+                            <div class="skeleton skeleton-text-line"></div>
+                            <div class="skeleton skeleton-text-line"></div>
+                            <div class="skeleton skeleton-text-line"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-message">
+                        <div class="skeleton-message-header">
+                            <div class="skeleton skeleton-avatar"></div>
+                            <div class="skeleton-text">
+                                <div class="skeleton skeleton-text-line"></div>
+                                <div class="skeleton skeleton-text-line"></div>
+                            </div>
+                        </div>
+                        <div class="skeleton-content">
+                            <div class="skeleton skeleton-text-line"></div>
+                            <div class="skeleton skeleton-text-line"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-message">
+                        <div class="skeleton-message-header">
+                            <div class="skeleton skeleton-avatar"></div>
+                            <div class="skeleton-text">
+                                <div class="skeleton skeleton-text-line"></div>
+                                <div class="skeleton skeleton-text-line"></div>
+                            </div>
+                        </div>
+                        <div class="skeleton-content">
+                            <div class="skeleton skeleton-text-line"></div>
+                            <div class="skeleton skeleton-text-line"></div>
+                            <div class="skeleton skeleton-text-line"></div>
+                            <div class="skeleton skeleton-text-line"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
 
             // Check if the logged-in user is the ticket creator
             if (discordUser.id !== ticketCreator) {
