@@ -578,7 +578,7 @@
                 document.querySelector('.container').style.display = 'none';
 
                 const token = localStorage.getItem('discord_token');
-                const response = await fetch('https://your-api-url.vercel.app/api/get-transcript', {
+                const response = await fetch('https://ticket-bot-dashboard.vercel.app/api/get-transcript', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
