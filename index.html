@@ -349,10 +349,8 @@
 
             const transcriptId = getTranscriptId();
             const userId = getQueryParam('userId');
-            const ticketCreator = getQueryParam('creator');
 
-            // Check if the logged-in user is the ticket creator
-            if (discordUser.id !== ticketCreator) {
+            if (discordUser.id !== userId) {
                 showError('You are not authorized to view this transcript.');
                 return;
             }
@@ -377,7 +375,7 @@
                 }
                 const data = await response.json();
                 
-                ticketIdElement.textContent = data.title;
+                ticketIdElement.textContent = data.channelName;
                 transcriptDateElement.textContent = formatTimestamp(Date.now());
                 
                 let html = '';
