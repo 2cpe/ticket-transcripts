@@ -18,8 +18,8 @@ module.exports = async (req, res) => {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: new URLSearchParams({
-                client_id: '1311786215909101718',
-                client_secret: '51xSS8NZLQO2p8ElCDCvxWmkuoajhuin',
+                client_id: '1327745611230871572',
+                client_secret: 'xIa8Blidj_7k-VjqvJ7wx96nQLKClCXW',
                 grant_type: 'authorization_code',
                 code: code,
                 redirect_uri: 'https://2cpe.github.io/ticket-transcripts/callback.html'
