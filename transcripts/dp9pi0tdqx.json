@@ -1,0 +1,24 @@
+{
+  "id": "dp9pi0tdqx",
+  "channelName": "ticket-_xwr",
+  "messages": [
+    {
+      "author": "Tickets#3349",
+      "content": "",
+      "timestamp": "1/12/2025, 6:40:38 PM",
+      "attachments": []
+    },
+    {
+      "author": "0kkq",
+      "content": "Error in ticket interaction: Error [InteractionAlreadyReplied]: The reply to this interaction has already been sent or deferred.\n    at ButtonInteraction.reply (C:\\Users\\pc\\Desktop\\Ticketbot\\node_modules\\discord.js\\src\\structures\\interfaces\\InteractionResponses.js:163:46)\n    at TicketManager.createTicket (C:\\Users\\pc\\Desktop\\Ticketbot\\utils\\ticketManager.js:18:31)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async handleCreateTicket (C:\\Users\\pc\\Desktop\\Ticketbot\\handlers\\interactionHandlers.js:36:27)\n    at async handleTicketInteraction (C:\\Users\\pc\\Desktop\\Ticketbot\\handlers\\interactionHandlers.js:8:17)\n    at async Object.execute (C:\\Users\\pc\\Desktop\\Ticketbot\\events\\interactionCreate.js:8:17) {\n  code: 'InteractionAlreadyReplied'\n}",
+      "timestamp": "1/12/2025, 6:40:59 PM",
+      "attachments": []
+    },
+    {
+      "author": "Tickets#3349",
+      "content": "<@1196615123809345686>",
+      "timestamp": "1/12/2025, 6:41:48 PM",
+      "attachments": []
+    }
+  ]
+}
