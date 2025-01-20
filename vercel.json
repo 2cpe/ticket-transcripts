@@ -5,6 +5,11 @@
             "src": "/api/auth",
             "methods": ["POST", "OPTIONS"],
             "dest": "/api/auth.js"
+        },
+        {
+            "src": "/api/transcripts",
+            "methods": ["GET", "OPTIONS"],
+            "dest": "/api/transcripts.js"
         }
     ]
 } 
