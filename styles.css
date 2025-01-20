@@ -115,4 +115,56 @@ body {
 
 .fade-in {
     animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Loading animation */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Error state animations */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.error-animation {
+    animation: shake 0.5s ease-in-out;
+}
+
+/* Smooth transitions */
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Card hover effects */
+.card {
+    transform: translateY(0);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px var(--shadow-color);
+}
+
+/* Message hover effects */
+.message {
+    transition: background-color 0.2s ease;
+}
+
+.message:hover {
+    background-color: var(--bg-tertiary);
+}
+
+/* Avatar glow effect */
+.author-avatar {
+    box-shadow: 0 0 0 2px var(--accent-primary);
+    transition: box-shadow 0.2s ease;
+}
+
+.author-avatar:hover {
+    box-shadow: 0 0 0 3px var(--accent-primary);
 } 

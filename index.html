@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ticket Transcript</title>
+    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -267,31 +269,158 @@
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* Additional styles specific to transcript page */
+        .transcript-container {
+            background-color: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            margin-top: 2rem;
+        }
+
+        .transcript-header {
+            background-color: var(--bg-tertiary);
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .info-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background-color: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .message {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.2s ease;
+        }
+
+        .message:hover {
+            background-color: var(--bg-tertiary);
+        }
+
+        .message:last-child {
+            border-bottom: none;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-primary);
+        }
+
+        .author {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .timestamp {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .content {
+            color: var(--text-secondary);
+            padding-left: calc(40px + 0.75rem);
+            line-height: 1.5;
+        }
+
+        .loading-container {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .loading-spinner {
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+        }
+
+        .error-container {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--error-color);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .error-icon {
+            color: var(--error-color);
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .error-title {
+            color: var(--error-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .error-message {
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .info-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .content {
+                padding-left: 0;
+                margin-top: 0.5rem;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <img src="https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png?ex=674a37bb&is=6748e63b&hm=78b76df79434c93afed039ba16a3050f32b25807d9a8669d7e6f1366b5313e07&" alt="Logo">
-            <h1>Ticket Transcript</h1>
-            <p>A record of your support conversation</p>
-        </div>
-
-        <div class="info-bar">
-            <div class="info-item">
-                <i class="fas fa-ticket-alt"></i>
-                <span id="ticket-id">Loading ticket information...</span>
+        <div class="card fade-in">
+            <div class="transcript-header">
+                <img src="https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png" alt="Logo" class="icon">
+                <h1 class="title">Ticket Transcript</h1>
+                <p class="description">A record of your support conversation</p>
             </div>
-            <div class="info-item">
-                <i class="far fa-clock"></i>
-                <span id="transcript-date"></span>
-            </div>
-        </div>
 
-        <div id="transcript">
-            <div class="loading">
-                <i class="fas fa-circle-notch"></i>
-                Loading transcript...
+            <div class="info-bar">
+                <div class="info-item">
+                    <i class="fas fa-ticket-alt"></i>
+                    <span id="ticket-id">Loading ticket information...</span>
+                </div>
+                <div class="info-item">
+                    <i class="far fa-clock"></i>
+                    <span id="transcript-date"></span>
+                </div>
+            </div>
+
+            <div id="transcript" class="transcript-container">
+                <div class="loading-container">
+                    <i class="fas fa-circle-notch fa-spin fa-3x loading-spinner"></i>
+                    <p class="description">Loading transcript...</p>
+                </div>
             </div>
         </div>
     </div>
