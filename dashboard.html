@@ -209,13 +209,20 @@
             if (!await checkAuth()) return;
 
             try {
-                // Fetch repository contents without authentication
-                const response = await fetch('https://api.github.com/repos/2cpe/ticket-transcripts/contents/transcripts');
-                const files = await response.json();
-                
+                const response = await fetch('https://api.github.com/repos/2cpe/ticket-transcripts/contents/transcripts', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('discord_token')}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch transcripts');
+                }
+
+                const transcripts = await response.json();
                 const transcriptsDiv = document.getElementById('transcripts');
                 
-                if (files.length === 0) {
+                if (transcripts.length === 0) {
                     transcriptsDiv.innerHTML = `
                         <div class="no-transcripts">
                             <i class="fas fa-ticket-alt"></i>
@@ -225,44 +232,21 @@
                     return;
                 }
 
-                let transcriptsHTML = '';
-                
-                // Process each transcript file
-                for (const file of files) {
-                    try {
-                        // Fetch and decode the content of each file
-                        const contentResponse = await fetch(file.download_url);
-                        const transcript = await contentResponse.json();
-                        
-                        // Only show transcripts for the logged-in user
-                        if (transcript.userId === discordUser.id) {
-                            const date = new Date(transcript.timestamp || Date.now());
-                            transcriptsHTML += `
-                                <div class="transcript-card">
-                                    <div class="transcript-header">
-                                        <span class="transcript-title">${transcript.channelName}</span>
-                                        <span class="transcript-date">${date.toLocaleDateString()}</span>
-                                    </div>
-                                    <div class="transcript-actions">
-                                        <button class="action-button view-button" onclick="viewTranscript('${transcript.id}')">
-                                            <i class="fas fa-eye"></i> View Transcript
-                                        </button>
-                                    </div>
-                                </div>
-                            `;
-                        }
-                    } catch (fileError) {
-                        console.error('Error processing transcript file:', fileError);
-                        continue; // Skip this file if there's an error
-                    }
-                }
-
-                transcriptsDiv.innerHTML = transcriptsHTML || `
-                    <div class="no-transcripts">
-                        <i class="fas fa-ticket-alt"></i>
-                        <p>No transcripts found for your account</p>
+                const transcriptsHTML = transcripts.map(transcript => `
+                    <div class="transcript-card">
+                        <div class="transcript-header">
+                            <span class="transcript-title">${transcript.channelName}</span>
+                            <span class="transcript-date">${new Date(transcript.timestamp).toLocaleDateString()}</span>
+                        </div>
+                        <div class="transcript-actions">
+                            <button class="action-button view-button" onclick="viewTranscript('${transcript.id}')">
+                                <i class="fas fa-eye"></i> View Transcript
+                            </button>
+                        </div>
                     </div>
-                `;
+                `).join('');
+
+                transcriptsDiv.innerHTML = transcriptsHTML;
 
             } catch (error) {
                 console.error('Error loading transcripts:', error);
