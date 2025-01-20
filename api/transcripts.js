@@ -1,5 +1,4 @@
 const { Octokit } = require('@octokit/rest');
-const config = require('../../config/config');
 
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', 'https://2cpe.github.io');
@@ -13,7 +12,7 @@ module.exports = async (req, res) => {
     // Verify Discord token
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-        return res.status(401).json({ error: 'No authorization header' });
+        return res.status(401).json({ error: 'No authorization token provided' });
     }
 
     try {
@@ -27,46 +26,46 @@ module.exports = async (req, res) => {
         }
 
         const discordUser = await discordResponse.json();
+        const userId = discordUser.id;
 
         // Initialize Octokit
         const octokit = new Octokit({
-            auth: config.github.token
+            auth: process.env.GITHUB_TOKEN
         });
 
         // Get all transcript files
         const { data: files } = await octokit.repos.getContent({
-            owner: config.github.owner,
-            repo: config.github.repo,
+            owner: '2cpe',
+            repo: 'ticket-transcripts',
             path: 'transcripts'
         });
 
         // Filter and process transcripts
         const userTranscripts = [];
         for (const file of files) {
-            if (file.type === 'file' && file.name.endsWith('.json')) {
-                const { data: content } = await octokit.repos.getContent({
-                    owner: config.github.owner,
-                    repo: config.github.repo,
-                    path: file.path
-                });
+            const { data: content } = await octokit.repos.getContent({
+                owner: '2cpe',
+                repo: 'ticket-transcripts',
+                path: file.path
+            });
 
-                const transcript = JSON.parse(Buffer.from(content.content, 'base64').toString());
-                
-                // Only include if it belongs to the user
-                if (transcript.userId === discordUser.id) {
-                    userTranscripts.push({
-                        id: transcript.id,
-                        channelName: transcript.channelName,
-                        timestamp: transcript.timestamp,
-                        fileName: file.name
-                    });
-                }
+            const transcript = JSON.parse(Buffer.from(content.content, 'base64').toString());
+            
+            // Only include transcripts for this user
+            if (transcript.userId === userId) {
+                userTranscripts.push({
+                    id: transcript.id,
+                    channelName: transcript.channelName,
+                    timestamp: transcript.timestamp,
+                    fileName: file.name
+                });
             }
         }
 
         res.json(userTranscripts);
+
     } catch (error) {
-        console.error('Error fetching transcripts:', error);
-        res.status(500).json({ error: 'Failed to fetch transcripts' });
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 }; 
