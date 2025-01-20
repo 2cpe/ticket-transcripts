@@ -270,7 +270,8 @@
         }
 
         function viewTranscript(transcriptId) {
-            window.location.href = `index.html?id=${transcriptId}&userId=${discordUser.id}`;
+            const fileName = `ticket_${discordUser.id}_${transcriptId}.json`;
+            window.location.href = `index.html?id=${transcriptId}&userId=${discordUser.id}&file=${fileName}`;
         }
 
         function logout() {

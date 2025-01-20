@@ -345,71 +345,73 @@
         }
 
         async function loadTranscript() {
-            if (!await checkAuth()) return;
+            const urlParams = new URLSearchParams(window.location.search);
+            const transcriptId = urlParams.get('id');
+            const userId = urlParams.get('userId');
+            const fileName = urlParams.get('file');
 
-            const transcriptId = getTranscriptId();
-            const userId = getQueryParam('userId');
-
-            if (discordUser.id !== userId) {
-                showError('You are not authorized to view this transcript.');
-                return;
-            }
-
-            const transcriptElement = document.getElementById('transcript');
-            const ticketIdElement = document.getElementById('ticket-id');
-            const transcriptDateElement = document.getElementById('transcript-date');
-
-            if (!transcriptId) {
-                transcriptElement.innerHTML = `
-                    <div class="error">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        No transcript ID provided
-                    </div>`;
+            if (!transcriptId || !userId || !fileName) {
+                showError('Invalid transcript URL');
                 return;
             }
 
             try {
-                const response = await fetch(`./transcripts/${transcriptId}.json`);
+                const response = await fetch(
+                    `https://api.github.com/repos/2cpe/ticket-transcripts/contents/transcripts/${fileName}`,
+                    {
+                        headers: {
+                            'Accept': 'application/vnd.github.v3+json'
+                        }
+                    }
+                );
+
                 if (!response.ok) {
                     throw new Error('Transcript not found or expired');
                 }
+
                 const data = await response.json();
-                
-                ticketIdElement.textContent = data.channelName;
-                transcriptDateElement.textContent = formatTimestamp(Date.now());
-                
-                let html = '';
-                data.messages.forEach(msg => {
-                    html += `
-                        <div class="message">
-                            <div class="message-header">
-                                <img class="author-avatar" src="${msg.authorAvatar || 'https://cdn.discordapp.com/embed/avatars/0.png'}" alt="Avatar">
-                                <span class="author">${escapeHtml(msg.author)}</span>
-                                <span class="timestamp">${escapeHtml(msg.timestamp)}</span>
-                            </div>
-                            <div class="content">${escapeHtml(msg.content)}</div>
-                        </div>
-                    `;
-                });
-                
-                transcriptElement.innerHTML = html;
+                const transcript = JSON.parse(atob(data.content));
+
+                // Verify this transcript belongs to the user
+                if (transcript.userId !== userId) {
+                    throw new Error('Unauthorized access');
+                }
+
+                displayTranscript(transcript);
             } catch (error) {
-                transcriptElement.innerHTML = `
-                    <div class="error">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        Failed to load transcript: ${error.message}
-                    </div>`;
+                showError(error.message);
             }
         }
 
-        function getTranscriptId() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('id');
-        }
+        function displayTranscript(transcript) {
+            const transcriptElement = document.getElementById('transcript');
+            let html = '';
 
-        function getQueryParam(param) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(param);
+            transcript.messages.forEach(msg => {
+                html += `
+                    <div class="message">
+                        <div class="message-header">
+                            <img class="author-avatar" src="${msg.authorAvatar || 'https://cdn.discordapp.com/embed/avatars/0.png'}" alt="Avatar">
+                            <span class="author">${escapeHtml(msg.author)}</span>
+                            <span class="timestamp">${escapeHtml(msg.timestamp)}</span>
+                        </div>
+                        <div class="content">${escapeHtml(msg.content)}</div>
+                        ${msg.attachments.length > 0 ? `
+                            <div class="attachments">
+                                ${msg.attachments.map(url => `
+                                    <a href="${url}" target="_blank" class="attachment">
+                                        <i class="fas fa-paperclip"></i> Attachment
+                                    </a>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+
+            transcriptElement.innerHTML = html;
+            document.getElementById('ticket-id').textContent = transcript.channelName;
+            document.getElementById('transcript-date').textContent = new Date(transcript.timestamp).toLocaleString();
         }
 
         function escapeHtml(unsafe) {
@@ -419,11 +421,6 @@
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
-        }
-
-        function formatTimestamp(timestamp) {
-            const date = new Date(timestamp);
-            return date.toLocaleString();
         }
 
         function showError(message) {
