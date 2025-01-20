@@ -1,0 +1,24 @@
+{
+  "id": "7uk8bhtphgb",
+  "channelName": "ticket-0kkq",
+  "userId": "1232027856196993154",
+  "timestamp": 1737390197696,
+  "messages": [
+    {
+      "author": "Tickets#3349",
+      "authorId": "1327745611230871572",
+      "authorAvatar": "https://cdn.discordapp.com/embed/avatars/4.png",
+      "content": "",
+      "timestamp": "1/20/2025, 7:22:55 PM",
+      "attachments": []
+    },
+    {
+      "author": "0kkq",
+      "authorId": "1232027856196993154",
+      "authorAvatar": "https://cdn.discordapp.com/avatars/1232027856196993154/eb746bbd891989efe988778ca1dd510d.webp",
+      "content": "test 1",
+      "timestamp": "1/20/2025, 7:22:59 PM",
+      "attachments": []
+    }
+  ]
+}
