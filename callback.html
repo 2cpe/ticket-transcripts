@@ -89,6 +89,9 @@
                 const returnUrl = localStorage.getItem('return_url');
                 if (returnUrl && returnUrl.includes('id=')) {
                     window.location.href = returnUrl;
+                } else if (state === 'dashboard') {
+                    // Redirect to dashboard
+                    window.location.href = 'https://2cpe.github.io/ticket-transcripts/dashboard.html';
                 } else if (state && state !== 'login') {
                     // Handle state containing transcript info
                     const [transcriptId, userId] = state.split('_');

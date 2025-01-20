@@ -12,65 +12,44 @@
             box-sizing: border-box;
         }
 
-        :root {
-            --bg-primary: #1A1B1E;        /* Discord's main background */
-            --bg-secondary: #2B2D31;      /* Discord's secondary background */
-            --bg-tertiary: #313338;       /* Discord's tertiary background */
-            --accent-color: #5865F2;      /* Discord's brand blue */
-            --accent-hover: #4752C4;      /* Darker blue for hover states */
-            --text-primary: #FFFFFF;      /* White text */
-            --text-secondary: #B5BAC1;    /* Discord's secondary text */
-            --border-color: rgba(255, 255, 255, 0.1);
-        }
-
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #36393f;
+            color: #dcddde;
             line-height: 1.6;
-            min-height: 100vh;
         }
 
         .container {
-            max-width: 1100px;
-            margin: 40px auto;
-            padding: 0 24px;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 20px;
         }
 
         .header {
-            background: var(--bg-tertiary);
-            padding: 40px;
-            border-radius: 24px;
-            margin-bottom: 32px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            background-color: #2f3136;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #40444b;
             text-align: center;
         }
 
         .header img {
-            width: 88px;
-            height: 88px;
-            border-radius: 20px;
-            margin-bottom: 24px;
-            transition: transform 0.3s ease;
-        }
-
-        .header img:hover {
-            transform: scale(1.05);
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            margin-bottom: 10px;
         }
 
         .header h1 {
-            font-size: 32px;
-            font-weight: 800;
-            margin-bottom: 12px;
-            background: linear-gradient(135deg, #FFFFFF 0%, #B5BAC1 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #ffffff;
+            font-size: 24px;
+            margin-bottom: 5px;
         }
 
         .header p {
-            color: #b5bac1;
-            font-size: 16px;
+            color: #b9bbbe;
+            font-size: 14px;
         }
 
         #transcript {
@@ -81,52 +60,46 @@
         }
 
         .message {
-            background: var(--bg-secondary);
-            padding: 16px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            border: 1px solid var(--border-color);
+            margin: 10px 0;
+            padding: 15px;
+            background-color: #36393f;
+            border-radius: 5px;
+            transition: background-color 0.2s;
         }
 
         .message:hover {
-            background: var(--bg-tertiary);
+            background-color: #32353b;
         }
 
         .message-header {
             display: flex;
             align-items: center;
-            gap: 16px;
-            margin-bottom: 16px;
+            margin-bottom: 8px;
         }
 
         .author-avatar {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            border: 2px solid var(--border-color);
-            transition: transform 0.2s ease;
-        }
-
-        .author-avatar:hover {
-            transform: scale(1.1);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
         }
 
         .author {
             font-weight: 600;
-            color: var(--text-primary);
-            font-size: 16px;
+            color: #ffffff;
+            margin-right: 8px;
         }
 
         .timestamp {
-            color: var(--text-secondary);
-            font-size: 14px;
+            color: #72767d;
+            font-size: 0.8em;
         }
 
         .content {
-            color: var(--text-secondary);
+            margin-left: 50px;
+            color: #dcddde;
             font-size: 15px;
-            line-height: 1.7;
-            margin-left: 60px;
+            word-wrap: break-word;
         }
 
         .loading {
@@ -156,63 +129,53 @@
         }
 
         .info-bar {
-            background: var(--bg-secondary);
-            padding: 20px 32px;
-            border-radius: 16px;
-            margin-bottom: 32px;
+            background-color: #202225;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border: 1px solid var(--border-color);
-            backdrop-filter: blur(10px);
         }
 
         .info-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            color: var(--text-secondary);
-            font-size: 15px;
+            color: #b9bbbe;
+            font-size: 14px;
         }
 
         .info-item i {
             margin-right: 5px;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 600px) {
             .container {
-                padding: 16px;
-                margin: 20px auto;
-            }
-
-            .header {
-                padding: 32px 24px;
-                border-radius: 20px;
+                padding: 10px;
             }
 
             .message {
-                padding: 20px;
+                padding: 10px;
             }
 
             .content {
                 margin-left: 0;
-                margin-top: 16px;
+                margin-top: 10px;
             }
 
             .info-bar {
                 flex-direction: column;
-                gap: 12px;
-                padding: 20px;
+                gap: 10px;
             }
         }
 
         .error-container {
-            background: var(--bg-tertiary);
-            border-radius: 24px;
-            padding: 48px;
+            background-color: #2f3136;
+            border-radius: 8px;
+            padding: 40px 20px;
             text-align: center;
-            border: 1px solid rgba(255, 0, 0, 0.2);
-            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
+            border: 1px solid #ff4444;
+            box-shadow: 0 0 10px rgba(255, 68, 68, 0.1);
         }
 
         .error-icon {
@@ -239,21 +202,20 @@
         }
 
         .error-button {
-            background: var(--accent-color);
-            color: white;
-            padding: 12px 32px;
-            border-radius: 12px;
-            font-weight: 600;
-            text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.2s ease;
+            background-color: #5865F2;
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: background-color 0.2s;
         }
 
         .error-button:hover {
-            background: var(--accent-hover);
-            transform: translateY(-2px);
+            background-color: #4752C4;
         }
 
         @keyframes pulse {
@@ -304,36 +266,6 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Add these new styles for buttons and interactive elements */
-        .button {
-            background: var(--accent-color);
-            color: var(--text-primary);
-            padding: 12px 24px;
-            border-radius: 4px;
-            border: none;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.2s ease;
-        }
-
-        .button:hover {
-            background: var(--accent-hover);
-        }
-
-        /* Add Discord-like input styling */
-        input, textarea {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            padding: 10px;
-            border-radius: 4px;
-        }
-
-        input:focus, textarea:focus {
-            border-color: var(--accent-color);
-            outline: none;
         }
     </style>
 </head>
