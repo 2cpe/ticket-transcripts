@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ticket Transcript</title>
-    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -15,43 +13,46 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #36393f;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #2b2d31 0%, #1e1f22 100%);
             color: #dcddde;
             line-height: 1.6;
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 900px;
-            margin: 20px auto;
-            padding: 0 20px;
+            max-width: 1000px;
+            margin: 32px auto;
+            padding: 0 24px;
         }
 
         .header {
-            background-color: #2f3136;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #40444b;
+            background-color: #313338;
+            padding: 32px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
             text-align: center;
         }
 
         .header img {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            margin-bottom: 10px;
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            margin-bottom: 16px;
         }
 
         .header h1 {
             color: #ffffff;
-            font-size: 24px;
-            margin-bottom: 5px;
+            font-size: 28px;
+            margin-bottom: 8px;
+            font-weight: 700;
         }
 
         .header p {
-            color: #b9bbbe;
-            font-size: 14px;
+            color: #b5bac1;
+            font-size: 16px;
         }
 
         #transcript {
@@ -62,46 +63,47 @@
         }
 
         .message {
-            margin: 10px 0;
-            padding: 15px;
-            background-color: #36393f;
-            border-radius: 5px;
+            margin: 16px 0;
+            padding: 16px;
+            background-color: #2b2d31;
+            border-radius: 12px;
             transition: background-color 0.2s;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
         .message:hover {
-            background-color: #32353b;
+            background-color: #313338;
         }
 
         .message-header {
             display: flex;
             align-items: center;
-            margin-bottom: 8px;
+            gap: 12px;
+            margin-bottom: 12px;
         }
 
         .author-avatar {
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            margin-right: 10px;
+            border: 2px solid rgba(255,255,255,0.1);
         }
 
         .author {
             font-weight: 600;
             color: #ffffff;
-            margin-right: 8px;
         }
 
         .timestamp {
-            color: #72767d;
-            font-size: 0.8em;
+            color: #b5bac1;
+            font-size: 0.85em;
         }
 
         .content {
-            margin-left: 50px;
             color: #dcddde;
             font-size: 15px;
-            word-wrap: break-word;
+            line-height: 1.6;
+            margin-left: 52px;
         }
 
         .loading {
@@ -131,13 +133,14 @@
         }
 
         .info-bar {
-            background-color: #202225;
-            padding: 10px 20px;
-            border-radius: 5px;
-            margin-bottom: 20px;
+            background-color: #313338;
+            padding: 16px 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
         .info-item {
@@ -172,12 +175,12 @@
         }
 
         .error-container {
-            background-color: #2f3136;
-            border-radius: 8px;
-            padding: 40px 20px;
+            background-color: #313338;
+            border-radius: 16px;
+            padding: 48px 32px;
             text-align: center;
-            border: 1px solid #ff4444;
-            box-shadow: 0 0 10px rgba(255, 68, 68, 0.1);
+            border: 1px solid rgba(255,0,0,0.2);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
         }
 
         .error-icon {
@@ -269,158 +272,31 @@
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        /* Additional styles specific to transcript page */
-        .transcript-container {
-            background-color: var(--bg-secondary);
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-            margin-top: 2rem;
-        }
-
-        .transcript-header {
-            background-color: var(--bg-tertiary);
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            text-align: center;
-        }
-
-        .info-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 1.5rem;
-            background-color: var(--bg-tertiary);
-            border-bottom: 1px solid var(--border-color);
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .info-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .message {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            transition: background-color 0.2s ease;
-        }
-
-        .message:hover {
-            background-color: var(--bg-tertiary);
-        }
-
-        .message:last-child {
-            border-bottom: none;
-        }
-
-        .message-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .author-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid var(--accent-primary);
-        }
-
-        .author {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .timestamp {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-
-        .content {
-            color: var(--text-secondary);
-            padding-left: calc(40px + 0.75rem);
-            line-height: 1.5;
-        }
-
-        .loading-container {
-            text-align: center;
-            padding: 3rem;
-        }
-
-        .loading-spinner {
-            color: var(--accent-primary);
-            margin-bottom: 1rem;
-        }
-
-        .error-container {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--error-color);
-            border-radius: 12px;
-            padding: 2rem;
-            text-align: center;
-            margin-top: 2rem;
-        }
-
-        .error-icon {
-            color: var(--error-color);
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .error-title {
-            color: var(--error-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .error-message {
-            color: var(--text-secondary);
-        }
-
-        @media (max-width: 768px) {
-            .info-bar {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .content {
-                padding-left: 0;
-                margin-top: 0.5rem;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="card">
-            <div class="header">
-                <img src="https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png" alt="Logo" class="header-icon">
-                <h1 class="header-title">Ticket Transcript</h1>
-                <p class="header-description">A record of your support conversation</p>
-            </div>
+        <div class="header">
+            <img src="https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png?ex=674a37bb&is=6748e63b&hm=78b76df79434c93afed039ba16a3050f32b25807d9a8669d7e6f1366b5313e07&" alt="Logo">
+            <h1>Ticket Transcript</h1>
+            <p>A record of your support conversation</p>
+        </div>
 
-            <div class="info-bar">
-                <div class="info-item">
-                    <i class="fas fa-ticket-alt"></i>
-                    <span id="ticket-id">Loading ticket information...</span>
-                </div>
-                <div class="info-item">
-                    <i class="far fa-clock"></i>
-                    <span id="transcript-date"></span>
-                </div>
+        <div class="info-bar">
+            <div class="info-item">
+                <i class="fas fa-ticket-alt"></i>
+                <span id="ticket-id">Loading ticket information...</span>
             </div>
+            <div class="info-item">
+                <i class="far fa-clock"></i>
+                <span id="transcript-date"></span>
+            </div>
+        </div>
 
-            <div id="transcript">
-                <div class="loading">
-                    <i class="fas fa-circle-notch loading-spinner"></i>
-                    <span>Loading transcript...</span>
-                </div>
+        <div id="transcript">
+            <div class="loading">
+                <i class="fas fa-circle-notch"></i>
+                Loading transcript...
             </div>
         </div>
     </div>
