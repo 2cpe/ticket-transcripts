@@ -4,23 +4,153 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Ticket Transcripts</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Copy the style from verify.html */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #36393f;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+            background-color: #2f3136;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            max-width: 400px;
+            width: 90%;
+            border: 1px solid #40444b;
+        }
+
+        .icon {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            border-radius: 50%;
+            padding: 10px;
+            background-color: #40444b;
+        }
+
+        .title {
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        .description {
+            color: #b9bbbe;
+            margin-bottom: 30px;
+            line-height: 1.5;
+            font-size: 16px;
+        }
+
+        .button {
+            background-color: #5865F2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .button:hover {
+            background-color: #4752C4;
+            transform: translateY(-2px);
+        }
+
+        .button i {
+            font-size: 20px;
+        }
+
+        .features {
+            margin-top: 30px;
+            text-align: left;
+            background-color: #40444b;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .features h3 {
+            color: #ffffff;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .features ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .features li {
+            color: #b9bbbe;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .features li i {
+            color: #5865F2;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            .title {
+                font-size: 24px;
+            }
+            
+            .description {
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <img src="https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png" alt="Logo" class="icon">
         <h1 class="title">Ticket Transcripts</h1>
-        <p class="description">Please login with Discord to view your ticket transcripts</p>
+        <p class="description">Access and manage your support ticket history with ease</p>
         <a href="#" class="button" id="loginButton">
             <i class="fab fa-discord"></i> Login with Discord
         </a>
+        <div class="features">
+            <h3>Features</h3>
+            <ul>
+                <li><i class="fas fa-history"></i> View your ticket history</li>
+                <li><i class="fas fa-file-alt"></i> Access ticket transcripts</li>
+                <li><i class="fas fa-shield-alt"></i> Secure authentication</li>
+                <li><i class="fas fa-clock"></i> 24/7 availability</li>
+            </ul>
+        </div>
     </div>
 
     <script>
         const CLIENT_ID = '1327745611230871572';
         const REDIRECT_URI = 'https://2cpe.github.io/ticket-transcripts/callback.html';
+
+        // Store the intended destination
+        localStorage.setItem('redirect_after_login', 'dashboard.html');
 
         document.getElementById('loginButton').href = 
             `https://discord.com/api/oauth2/authorize` +
