@@ -1,4 +1,5 @@
 name: Save Transcript
+
 on:
   repository_dispatch:
     types: [save-transcript]
@@ -6,15 +7,35 @@ on:
 jobs:
   save-transcript:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v2
-      - name: Save Transcript
+        
+      - name: Create transcripts directory if not exists
+        run: mkdir -p transcripts
+
+      - name: Save transcript
         run: |
-          echo '${{ github.event.client_payload.transcript }}' > transcripts/${{ github.event.client_payload.id }}.json
+          echo '${{ github.event.client_payload.transcript }}' > "transcripts/${{ github.event.client_payload.id }}.json"
+          
+          # Read current index
+          if [ -f "transcripts/index.json" ]; then
+            INDEX_CONTENT=$(cat transcripts/index.json)
+          else
+            INDEX_CONTENT='{"tickets":[]}'
+          fi
+          
+          # Add new ticket to index
+          NEW_TICKET="{\"id\":\"${{ github.event.client_payload.id }}\",\"userId\":\"${{ github.event.client_payload.userId }}\",\"channelName\":\"${{ github.event.client_payload.channelName }}\",\"closedAt\":\"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"}"
+          
+          # Update index.json using jq
+          echo $INDEX_CONTENT | jq ".tickets += [$NEW_TICKET]" > transcripts/index.json
+
       - name: Commit files
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add transcripts/
-          git commit -m "Add transcript ${{ github.event.client_payload.id }}"
+          git commit -m "Save transcript ${{ github.event.client_payload.id }}"
           git push 
