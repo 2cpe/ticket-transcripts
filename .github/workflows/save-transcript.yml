@@ -1,20 +1,40 @@
-name: Save Transcript
+name: Manage Transcripts
 on:
-  repository_dispatch:
-    types: [save-transcript]
+  push:
+    paths:
+      - 'transcripts/**'
 
 jobs:
-  save-transcript:
+  process-transcripts:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Save Transcript
+      
+      - name: Process Transcripts
         run: |
-          echo '${{ github.event.client_payload.transcript }}' > transcripts/${{ github.event.client_payload.id }}.json
-      - name: Commit files
+          mkdir -p processed
+          for file in transcripts/*.json; do
+            # Create a hash of the content to obscure the filename
+            HASH=$(sha256sum "$file" | cut -d' ' -f1)
+            # Create index entry with minimal info
+            jq -c '{
+              id: .id,
+              userId: .userId,
+              channelName: .channelName,
+              timestamp: .timestamp,
+              hash: $HASH
+            }' "$file" >> processed/index.json
+            # Move full transcript to hashed filename
+            mv "$file" "processed/$HASH.json"
+          done
+          
+      - name: Deploy to Protected Branch
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add transcripts/
-          git commit -m "Add transcript ${{ github.event.client_payload.id }}"
-          git push 
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          git checkout -b protected
+          git add processed/
+          git commit -m "Process transcripts"
+          git push origin protected --force
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
