@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticket Dashboard</title>
+    <title>Ticket Transcripts Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * {
@@ -16,7 +16,6 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #36393f;
             color: #dcddde;
-            line-height: 1.6;
         }
 
         .container {
@@ -31,100 +30,99 @@
             border-radius: 10px;
             margin-bottom: 20px;
             border: 1px solid #40444b;
-            text-align: center;
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
         }
 
         .user-info {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
         }
 
         .user-avatar {
-            width: 40px;
-            height: 40px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
         }
 
-        .tickets-container {
+        .transcripts-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
+            margin-top: 20px;
         }
 
-        .ticket-card {
+        .transcript-card {
             background-color: #2f3136;
-            border-radius: 10px;
+            border-radius: 8px;
             padding: 20px;
             border: 1px solid #40444b;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s, border-color 0.2s;
         }
 
-        .ticket-card:hover {
+        .transcript-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            border-color: #5865f2;
         }
 
-        .ticket-header {
+        .transcript-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
         }
 
-        .ticket-status {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .status-closed {
-            background-color: #ed4245;
-            color: white;
-        }
-
-        .ticket-title {
-            font-size: 18px;
+        .transcript-title {
+            font-size: 1.1em;
             font-weight: 600;
             color: #ffffff;
-            margin-bottom: 10px;
         }
 
-        .ticket-info {
-            color: #b9bbbe;
-            font-size: 14px;
-            margin-bottom: 15px;
+        .transcript-date {
+            color: #72767d;
+            font-size: 0.9em;
         }
 
-        .ticket-actions {
+        .transcript-actions {
             display: flex;
             gap: 10px;
+            margin-top: 15px;
         }
 
-        .button {
+        .action-button {
             padding: 8px 16px;
             border-radius: 4px;
             border: none;
             cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.2s;
-            text-decoration: none;
-            display: inline-flex;
+            font-size: 0.9em;
+            display: flex;
             align-items: center;
             gap: 6px;
+            transition: background-color 0.2s;
         }
 
-        .button-primary {
+        .view-button {
             background-color: #5865f2;
             color: white;
         }
 
-        .button-primary:hover {
+        .view-button:hover {
             background-color: #4752c4;
+        }
+
+        .logout-button {
+            background-color: #ed4245;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            background-color: #c03537;
         }
 
         .loading {
@@ -134,16 +132,14 @@
             color: #ffffff;
         }
 
-        .no-tickets {
+        .no-transcripts {
             text-align: center;
             padding: 40px;
-            background-color: #2f3136;
-            border-radius: 10px;
-            border: 1px solid #40444b;
+            color: #72767d;
         }
 
         @media (max-width: 768px) {
-            .tickets-container {
+            .transcripts-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -153,17 +149,20 @@
     <div class="container">
         <div class="header">
             <div class="user-info">
-                <img id="userAvatar" src="" alt="User Avatar" class="user-avatar">
-                <span id="username">Loading...</span>
+                <img src="" alt="Avatar" class="user-avatar" id="userAvatar">
+                <div>
+                    <h2 id="username">Loading...</h2>
+                    <span id="userId"></span>
+                </div>
             </div>
-            <button class="button button-primary" onclick="logout()">
+            <button class="logout-button" onclick="logout()">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </button>
         </div>
 
-        <div id="ticketsContainer" class="tickets-container">
+        <div id="transcripts" class="transcripts-grid">
             <div class="loading">
-                <i class="fas fa-circle-notch fa-spin"></i> Loading your tickets...
+                <i class="fas fa-circle-notch fa-spin"></i> Loading your transcripts...
             </div>
         </div>
     </div>
@@ -190,69 +189,86 @@
                 }
 
                 discordUser = await response.json();
-                displayUserInfo();
+                updateUserInfo(discordUser);
                 return true;
             } catch (error) {
+                console.error('Auth error:', error);
                 localStorage.removeItem('discord_token');
                 window.location.href = 'login.html';
                 return false;
             }
         }
 
-        function displayUserInfo() {
-            document.getElementById('userAvatar').src = 
-                `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`;
-            document.getElementById('username').textContent = discordUser.username;
+        function updateUserInfo(user) {
+            document.getElementById('username').textContent = user.username;
+            document.getElementById('userId').textContent = `ID: ${user.id}`;
+            document.getElementById('userAvatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
         }
 
-        async function loadTickets() {
+        async function loadTranscripts() {
             if (!await checkAuth()) return;
 
             try {
-                const response = await fetch(`/api/tickets/${discordUser.id}`);
-                const tickets = await response.json();
-
-                const container = document.getElementById('ticketsContainer');
-
-                if (tickets.length === 0) {
-                    container.innerHTML = `
-                        <div class="no-tickets">
-                            <i class="fas fa-ticket-alt fa-2x"></i>
-                            <h2>No Tickets Found</h2>
-                            <p>You haven't created any tickets yet.</p>
+                const response = await fetch(`https://api.github.com/repos/2cpe/ticket-transcripts/contents/transcripts`);
+                const files = await response.json();
+                
+                const transcriptsDiv = document.getElementById('transcripts');
+                
+                if (files.length === 0) {
+                    transcriptsDiv.innerHTML = `
+                        <div class="no-transcripts">
+                            <i class="fas fa-ticket-alt"></i>
+                            <p>No transcripts found</p>
                         </div>
                     `;
                     return;
                 }
 
-                container.innerHTML = tickets.map(ticket => `
-                    <div class="ticket-card">
-                        <div class="ticket-header">
-                            <span class="ticket-status status-closed">Closed</span>
-                            <span>${new Date(ticket.closedAt).toLocaleDateString()}</span>
-                        </div>
-                        <h3 class="ticket-title">${ticket.channelName}</h3>
-                        <div class="ticket-info">
-                            <p><i class="fas fa-star"></i> Rating: ${'⭐'.repeat(ticket.rating)}</p>
-                            <p><i class="fas fa-clock"></i> Duration: ${ticket.duration}</p>
-                        </div>
-                        <div class="ticket-actions">
-                            <a href="/transcript?id=${ticket.transcriptId}" class="button button-primary">
-                                <i class="fas fa-file-alt"></i> View Transcript
-                            </a>
-                        </div>
+                let transcriptsHTML = '';
+                
+                for (const file of files) {
+                    const content = await fetch(file.download_url);
+                    const transcript = await content.json();
+                    
+                    // Only show transcripts for the logged-in user
+                    if (transcript.userId === discordUser.id) {
+                        const date = new Date(transcript.timestamp || Date.now());
+                        transcriptsHTML += `
+                            <div class="transcript-card">
+                                <div class="transcript-header">
+                                    <span class="transcript-title">${transcript.channelName}</span>
+                                    <span class="transcript-date">${date.toLocaleDateString()}</span>
+                                </div>
+                                <div class="transcript-actions">
+                                    <button class="action-button view-button" onclick="viewTranscript('${file.name.replace('.json', '')}')">
+                                        <i class="fas fa-eye"></i> View Transcript
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+
+                transcriptsDiv.innerHTML = transcriptsHTML || `
+                    <div class="no-transcripts">
+                        <i class="fas fa-ticket-alt"></i>
+                        <p>No transcripts found for your account</p>
                     </div>
-                `).join('');
+                `;
 
             } catch (error) {
-                console.error('Error loading tickets:', error);
-                document.getElementById('ticketsContainer').innerHTML = `
+                console.error('Error loading transcripts:', error);
+                document.getElementById('transcripts').innerHTML = `
                     <div class="error">
                         <i class="fas fa-exclamation-triangle"></i>
-                        Failed to load tickets. Please try again later.
+                        Failed to load transcripts: ${error.message}
                     </div>
                 `;
             }
+        }
+
+        function viewTranscript(transcriptId) {
+            window.location.href = `index.html?id=${transcriptId}&userId=${discordUser.id}`;
         }
 
         function logout() {
@@ -260,7 +276,7 @@
             window.location.href = 'login.html';
         }
 
-        window.onload = loadTickets;
+        window.onload = loadTranscripts;
     </script>
 </body>
 </html> 
