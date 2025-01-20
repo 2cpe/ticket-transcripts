@@ -1,16 +1,17 @@
 :root {
-    --bg-primary: #1a1b1e;
-    --bg-secondary: #2a2b2f;
-    --bg-tertiary: #3a3b3f;
+    /* Modern Discord-inspired color palette */
+    --bg-primary: #313338;
+    --bg-secondary: #2B2D31;
+    --bg-tertiary: #1E1F22;
     --accent-primary: #5865F2;
     --accent-hover: #4752C4;
-    --text-primary: #ffffff;
-    --text-secondary: #b9bbbe;
-    --text-muted: #72767d;
-    --border-color: rgba(255, 255, 255, 0.1);
+    --text-primary: #F2F3F5;
+    --text-secondary: #B5BAC1;
+    --text-muted: #949BA4;
+    --border-color: rgba(78, 80, 88, 0.3);
     --shadow-color: rgba(0, 0, 0, 0.2);
-    --error-color: #ff4444;
-    --success-color: #43b581;
+    --error-color: #DA373C;
+    --success-color: #23A559;
 }
 
 * {
@@ -20,34 +21,24 @@
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family: 'gg sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     background-color: var(--bg-primary);
     color: var(--text-primary);
-    line-height: 1.6;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1000px;
     margin: 0 auto;
-    padding: 2rem;
-    width: 100%;
+    padding: 1rem;
 }
 
 .card {
     background-color: var(--bg-secondary);
-    border-radius: 12px;
-    padding: 2rem;
-    box-shadow: 0 8px 24px var(--shadow-color);
+    border-radius: 8px;
     border: 1px solid var(--border-color);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 32px var(--shadow-color);
+    overflow: hidden;
 }
 
 .button {
@@ -57,114 +48,153 @@ body {
     background-color: var(--accent-primary);
     color: var(--text-primary);
     padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    border: none;
+    border-radius: 4px;
     font-size: 1rem;
     font-weight: 500;
-    cursor: pointer;
     text-decoration: none;
-    transition: background-color 0.2s ease, transform 0.2s ease;
+    transition: background-color 0.15s ease;
 }
 
 .button:hover {
     background-color: var(--accent-hover);
-    transform: translateY(-1px);
 }
 
-.icon {
-    width: 96px;
-    height: 96px;
-    border-radius: 24px;
-    margin-bottom: 1.5rem;
-}
-
-.title {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    background: linear-gradient(45deg, var(--text-primary), var(--text-secondary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.description {
-    color: var(--text-secondary);
-    margin-bottom: 2rem;
-    font-size: 1.1rem;
-}
-
-@media (max-width: 768px) {
-    .container {
-        padding: 1rem;
-    }
-    
-    .card {
-        padding: 1.5rem;
-    }
-    
-    .title {
-        font-size: 1.75rem;
-    }
-}
-
-/* Animation keyframes */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.fade-in {
-    animation: fadeIn 0.3s ease-out forwards;
-}
-
-/* Loading animation */
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-/* Error state animations */
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
-}
-
-.error-animation {
-    animation: shake 0.5s ease-in-out;
-}
-
-/* Smooth transitions */
-.fade-in {
-    opacity: 0;
-    animation: fadeIn 0.3s ease-out forwards;
-}
-
-/* Card hover effects */
-.card {
-    transform: translateY(0);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 32px var(--shadow-color);
-}
-
-/* Message hover effects */
+/* Message styles */
 .message {
-    transition: background-color 0.2s ease;
+    padding: 1rem;
+    display: flex;
+    gap: 1rem;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .message:hover {
     background-color: var(--bg-tertiary);
 }
 
-/* Avatar glow effect */
-.author-avatar {
-    box-shadow: 0 0 0 2px var(--accent-primary);
-    transition: box-shadow 0.2s ease;
+.message-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    flex-shrink: 0;
 }
 
-.author-avatar:hover {
-    box-shadow: 0 0 0 3px var(--accent-primary);
+.message-content {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.message-header {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.message-author {
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.message-timestamp {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.message-text {
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+    word-wrap: break-word;
+}
+
+/* Header styles */
+.header {
+    padding: 1.5rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.header-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    margin-bottom: 1rem;
+}
+
+.header-title {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.header-description {
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+}
+
+/* Info bar */
+.info-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background-color: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.875rem;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+}
+
+/* Loading state */
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    color: var(--text-secondary);
+}
+
+.loading-spinner {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 1rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Error state */
+.error {
+    padding: 1rem;
+    color: var(--error-color);
+    text-align: center;
+    background-color: rgba(218, 55, 60, 0.1);
+    border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0.5rem;
+    }
+    
+    .message {
+        padding: 0.75rem;
+    }
+    
+    .header {
+        padding: 1rem;
+    }
+    
+    .info-bar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 } 
