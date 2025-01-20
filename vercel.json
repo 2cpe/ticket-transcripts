@@ -1,15 +1,18 @@
 {
     "version": 2,
+    "env": {
+        "GITHUB_TOKEN": "@github_token"
+    },
     "routes": [
-        {
-            "src": "/api/auth",
-            "methods": ["POST", "OPTIONS"],
-            "dest": "/api/auth.js"
-        },
         {
             "src": "/api/transcripts",
             "methods": ["GET", "OPTIONS"],
             "dest": "/api/transcripts.js"
+        },
+        {
+            "src": "/api/auth",
+            "methods": ["POST", "OPTIONS"],
+            "dest": "/api/auth.js"
         }
     ]
 } 
