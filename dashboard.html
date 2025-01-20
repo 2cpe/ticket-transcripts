@@ -6,54 +6,50 @@
     <title>Ticket Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #36393f;
-            color: #ffffff;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #36393f;
+            color: #dcddde;
+            line-height: 1.6;
         }
 
         .container {
             max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+            margin: 20px auto;
+            padding: 0 20px;
         }
 
         .header {
             background-color: #2f3136;
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 10px;
             margin-bottom: 20px;
-            text-align: center;
             border: 1px solid #40444b;
-        }
-
-        .header img {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            margin-bottom: 10px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .user-info {
             display: flex;
             align-items: center;
-            gap: 15px;
-            background-color: #2f3136;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #40444b;
+            gap: 10px;
         }
 
         .user-avatar {
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
         }
 
-        .tickets-grid {
+        .tickets-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
@@ -61,7 +57,7 @@
 
         .ticket-card {
             background-color: #2f3136;
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 20px;
             border: 1px solid #40444b;
             transition: transform 0.2s, box-shadow 0.2s;
@@ -69,7 +65,7 @@
 
         .ticket-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
 
         .ticket-header {
@@ -79,80 +75,75 @@
             margin-bottom: 15px;
         }
 
-        .ticket-title {
-            font-size: 1.1em;
+        .ticket-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
             font-weight: bold;
-            color: #ffffff;
         }
 
-        .ticket-date {
-            color: #b9bbbe;
-            font-size: 0.9em;
-        }
-
-        .ticket-footer {
-            margin-top: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .view-button {
-            background-color: #5865F2;
+        .status-closed {
+            background-color: #ed4245;
             color: white;
-            border: none;
+        }
+
+        .ticket-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .ticket-info {
+            color: #b9bbbe;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .ticket-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .button {
             padding: 8px 16px;
             border-radius: 4px;
+            border: none;
             cursor: pointer;
-            text-decoration: none;
-            font-size: 0.9em;
+            font-size: 14px;
             transition: background-color 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .view-button:hover {
-            background-color: #4752C4;
+        .button-primary {
+            background-color: #5865f2;
+            color: white;
+        }
+
+        .button-primary:hover {
+            background-color: #4752c4;
         }
 
         .loading {
             text-align: center;
             padding: 40px;
-            color: #b9bbbe;
-        }
-
-        .loading i {
-            animation: spin 1s linear infinite;
+            font-size: 18px;
+            color: #ffffff;
         }
 
         .no-tickets {
             text-align: center;
             padding: 40px;
             background-color: #2f3136;
-            border-radius: 8px;
-            color: #b9bbbe;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .logout-button {
-            background-color: #ed4245;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: background-color 0.2s;
-        }
-
-        .logout-button:hover {
-            background-color: #c03537;
+            border-radius: 10px;
+            border: 1px solid #40444b;
         }
 
         @media (max-width: 768px) {
-            .tickets-grid {
+            .tickets-container {
                 grid-template-columns: 1fr;
             }
         }
@@ -161,34 +152,25 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png" alt="Logo">
-            <h1>Ticket Dashboard</h1>
-            <p>View and manage your closed tickets</p>
-        </div>
-
-        <div class="user-info">
-            <img id="userAvatar" src="" alt="User Avatar" class="user-avatar">
-            <div>
-                <h3 id="userName">Loading...</h3>
-                <p id="userId"></p>
+            <div class="user-info">
+                <img id="userAvatar" src="" alt="User Avatar" class="user-avatar">
+                <span id="username">Loading...</span>
             </div>
-            <button class="logout-button" onclick="logout()">
+            <button class="button button-primary" onclick="logout()">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </button>
         </div>
 
-        <div id="ticketsContainer" class="tickets-grid">
+        <div id="ticketsContainer" class="tickets-container">
             <div class="loading">
-                <i class="fas fa-circle-notch"></i>
-                Loading your tickets...
+                <i class="fas fa-circle-notch fa-spin"></i> Loading your tickets...
             </div>
         </div>
     </div>
 
     <script>
-        const CLIENT_ID = '1327745611230871572';
-        const REDIRECT_URI = 'https://2cpe.github.io/ticket-transcripts/callback.html';
-        
+        let discordUser = null;
+
         async function checkAuth() {
             const accessToken = localStorage.getItem('discord_token');
             if (!accessToken) {
@@ -207,9 +189,9 @@
                     throw new Error('Token invalid');
                 }
 
-                const userData = await response.json();
-                displayUserInfo(userData);
-                return userData;
+                discordUser = await response.json();
+                displayUserInfo();
+                return true;
             } catch (error) {
                 localStorage.removeItem('discord_token');
                 window.location.href = 'login.html';
@@ -217,51 +199,46 @@
             }
         }
 
-        function displayUserInfo(user) {
+        function displayUserInfo() {
             document.getElementById('userAvatar').src = 
-                user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` 
-                          : 'https://cdn.discordapp.com/embed/avatars/0.png';
-            document.getElementById('userName').textContent = user.username;
-            document.getElementById('userId').textContent = `ID: ${user.id}`;
+                `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`;
+            document.getElementById('username').textContent = discordUser.username;
         }
 
-        async function loadTickets(userId) {
-            const ticketsContainer = document.getElementById('ticketsContainer');
-            
-            try {
-                const response = await fetch(`./transcripts/index.json`);
-                if (!response.ok) {
-                    throw new Error('Failed to load tickets index');
-                }
-                
-                const data = await response.json();
-                const userTickets = data.tickets.filter(ticket => ticket.userId === userId);
+        async function loadTickets() {
+            if (!await checkAuth()) return;
 
-                if (userTickets.length === 0) {
-                    ticketsContainer.innerHTML = `
+            try {
+                const response = await fetch(`/api/tickets/${discordUser.id}`);
+                const tickets = await response.json();
+
+                const container = document.getElementById('ticketsContainer');
+
+                if (tickets.length === 0) {
+                    container.innerHTML = `
                         <div class="no-tickets">
-                            <i class="fas fa-ticket-alt"></i>
-                            <p>You don't have any closed tickets yet.</p>
+                            <i class="fas fa-ticket-alt fa-2x"></i>
+                            <h2>No Tickets Found</h2>
+                            <p>You haven't created any tickets yet.</p>
                         </div>
                     `;
                     return;
                 }
 
-                // Sort tickets by closedAt date, newest first
-                userTickets.sort((a, b) => new Date(b.closedAt) - new Date(a.closedAt));
-
-                ticketsContainer.innerHTML = userTickets.map(ticket => `
+                container.innerHTML = tickets.map(ticket => `
                     <div class="ticket-card">
                         <div class="ticket-header">
-                            <span class="ticket-title">${escapeHtml(ticket.channelName)}</span>
-                            <span class="ticket-date">${new Date(ticket.closedAt).toLocaleDateString()}</span>
+                            <span class="ticket-status status-closed">Closed</span>
+                            <span>${new Date(ticket.closedAt).toLocaleDateString()}</span>
                         </div>
-                        <div class="ticket-footer">
-                            <span class="ticket-status">
-                                <i class="fas fa-check-circle"></i> Closed
-                            </span>
-                            <a href="index.html?id=${ticket.id}&userId=${userId}" class="view-button">
-                                <i class="fas fa-eye"></i> View Transcript
+                        <h3 class="ticket-title">${ticket.channelName}</h3>
+                        <div class="ticket-info">
+                            <p><i class="fas fa-star"></i> Rating: ${'⭐'.repeat(ticket.rating)}</p>
+                            <p><i class="fas fa-clock"></i> Duration: ${ticket.duration}</p>
+                        </div>
+                        <div class="ticket-actions">
+                            <a href="/transcript?id=${ticket.transcriptId}" class="button button-primary">
+                                <i class="fas fa-file-alt"></i> View Transcript
                             </a>
                         </div>
                     </div>
@@ -269,26 +246,13 @@
 
             } catch (error) {
                 console.error('Error loading tickets:', error);
-                ticketsContainer.innerHTML = `
-                    <div class="no-tickets">
-                        <i class="fas fa-exclamation-circle"></i>
-                        <p>Failed to load tickets: ${error.message}</p>
-                        <button onclick="window.location.reload()" class="view-button" style="margin-top: 15px;">
-                            <i class="fas fa-sync"></i> Retry
-                        </button>
+                document.getElementById('ticketsContainer').innerHTML = `
+                    <div class="error">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Failed to load tickets. Please try again later.
                     </div>
                 `;
             }
-        }
-
-        // Add this helper function for security
-        function escapeHtml(unsafe) {
-            return unsafe
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
         }
 
         function logout() {
@@ -296,12 +260,7 @@
             window.location.href = 'login.html';
         }
 
-        window.onload = async () => {
-            const user = await checkAuth();
-            if (user) {
-                loadTickets(user.id);
-            }
-        };
+        window.onload = loadTickets;
     </script>
 </body>
 </html> 
