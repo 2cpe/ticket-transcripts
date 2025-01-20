@@ -229,15 +229,13 @@
             const ticketsContainer = document.getElementById('ticketsContainer');
             
             try {
-                // This is where you would normally fetch tickets from your API
-                // For now, we'll use a mock data structure
                 const response = await fetch(`./transcripts/index.json`);
                 if (!response.ok) {
-                    throw new Error('Failed to load tickets');
+                    throw new Error('Failed to load tickets index');
                 }
                 
-                const tickets = await response.json();
-                const userTickets = tickets.filter(ticket => ticket.userId === userId);
+                const data = await response.json();
+                const userTickets = data.tickets.filter(ticket => ticket.userId === userId);
 
                 if (userTickets.length === 0) {
                     ticketsContainer.innerHTML = `
@@ -249,10 +247,13 @@
                     return;
                 }
 
+                // Sort tickets by closedAt date, newest first
+                userTickets.sort((a, b) => new Date(b.closedAt) - new Date(a.closedAt));
+
                 ticketsContainer.innerHTML = userTickets.map(ticket => `
                     <div class="ticket-card">
                         <div class="ticket-header">
-                            <span class="ticket-title">${ticket.channelName}</span>
+                            <span class="ticket-title">${escapeHtml(ticket.channelName)}</span>
                             <span class="ticket-date">${new Date(ticket.closedAt).toLocaleDateString()}</span>
                         </div>
                         <div class="ticket-footer">
@@ -267,13 +268,27 @@
                 `).join('');
 
             } catch (error) {
+                console.error('Error loading tickets:', error);
                 ticketsContainer.innerHTML = `
                     <div class="no-tickets">
                         <i class="fas fa-exclamation-circle"></i>
                         <p>Failed to load tickets: ${error.message}</p>
+                        <button onclick="window.location.reload()" class="view-button" style="margin-top: 15px;">
+                            <i class="fas fa-sync"></i> Retry
+                        </button>
                     </div>
                 `;
             }
+        }
+
+        // Add this helper function for security
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
         }
 
         function logout() {
