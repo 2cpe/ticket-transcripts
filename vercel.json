@@ -1,19 +1,13 @@
 {
     "version": 2,
     "env": {
-        "GITHUB_TOKEN": "@github_token",
-        "ENCRYPTION_KEY": "@encryption_key"
+        "GITHUB_TOKEN": "@github_token"
     },
     "routes": [
         {
             "src": "/api/transcripts",
             "methods": ["GET", "OPTIONS"],
-            "dest": "/api/transcripts-secure.js"
-        },
-        {
-            "src": "/api/key",
-            "methods": ["GET", "OPTIONS"],
-            "dest": "/api/key.js"
+            "dest": "/api/transcripts.js"
         },
         {
             "src": "/api/auth",
