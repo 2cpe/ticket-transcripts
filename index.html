@@ -331,10 +331,13 @@
             const userId = urlParams.get('userId');
             const fileName = urlParams.get('file');
 
-            if (!transcriptId || !userId || !fileName) {
+            if (!transcriptId || !userId) {
                 showError('Invalid transcript URL');
                 return;
             }
+
+            // Construct fileName if not provided
+            const actualFileName = fileName || `ticket_${userId}_${transcriptId}.json`;
 
             try {
                 // First verify the user is authenticated
@@ -353,7 +356,7 @@
                 }
 
                 const response = await fetch(
-                    `https://api.github.com/repos/2cpe/ticket-transcripts/contents/transcripts/${fileName}`,
+                    `https://api.github.com/repos/2cpe/ticket-transcripts/contents/transcripts/${actualFileName}`,
                     {
                         headers: {
                             'Accept': 'application/vnd.github.v3+json'
@@ -367,7 +370,6 @@
 
                 const data = await response.json();
                 const transcript = JSON.parse(atob(data.content));
-
                 displayTranscript(transcript);
             } catch (error) {
                 showError(error.message);

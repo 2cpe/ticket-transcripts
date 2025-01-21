@@ -86,23 +86,28 @@
                 localStorage.setItem('discord_user', JSON.stringify(userData));
 
                 // Handle redirect
-                const redirectTo = localStorage.getItem('redirect_after_login') || 'dashboard.html';
                 const returnUrl = localStorage.getItem('return_url');
-
-                if (returnUrl && returnUrl.includes('id=')) {
-                    // If returning to a specific transcript
-                    window.location.href = returnUrl;
+                if (returnUrl) {
+                    // Parse the return URL
+                    const returnUrlParams = new URL(returnUrl).searchParams;
+                    const transcriptId = returnUrlParams.get('id');
+                    const userId = returnUrlParams.get('userId');
+                    
+                    if (transcriptId && userId) {
+                        // Construct proper URL with file parameter
+                        window.location.href = `index.html?id=${transcriptId}&userId=${userId}&file=ticket_${userId}_${transcriptId}.json`;
+                    } else {
+                        window.location.href = 'dashboard.html';
+                    }
                 } else if (state && state !== 'login') {
                     // Handle state containing transcript info
                     const [transcriptId, userId] = state.split('_');
-                    window.location.href = `index.html?id=${transcriptId}&userId=${userId}&creator=${userId}`;
+                    window.location.href = `index.html?id=${transcriptId}&userId=${userId}&file=ticket_${userId}_${transcriptId}.json`;
                 } else {
-                    // Default redirect to dashboard
-                    window.location.href = redirectTo;
+                    window.location.href = 'dashboard.html';
                 }
 
                 // Clean up storage
-                localStorage.removeItem('redirect_after_login');
                 localStorage.removeItem('return_url');
 
             } catch (error) {
