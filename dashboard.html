@@ -459,38 +459,71 @@
             if (!discordUser) return;
             
             try {
-                // First load some sample products
+                // Define products with their associated role IDs
                 const products = [
                     {
                         id: 1,
                         name: "RaZo Premium",
                         description: "Premium access to all features",
                         image: "https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png",
-                        downloadUrl: "#"
+                        downloadUrl: "#",
+                        roleId: "1327749873810014233"
                     },
                     {
                         id: 2,
                         name: "RaZo Tools",
                         description: "Essential tools package",
                         image: "https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png",
-                        downloadUrl: "#"
+                        downloadUrl: "#",
+                        roleId: "1331100033755643924"
                     }
                 ];
 
-                // For now, just show the products without guild check
-                const downloadsHTML = products.map(product => `
+                // Fetch user's guild member data
+                const guildResponse = await fetch(`https://discord.com/api/users/@me/guilds/1327749495567552592/member`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('discord_token')}`
+                    }
+                });
+
+                if (!guildResponse.ok) {
+                    throw new Error('Failed to fetch guild member data');
+                }
+
+                const guildMember = await guildResponse.json();
+                const userRoles = guildMember.roles || [];
+
+                // Filter products based on user's roles
+                const accessibleProducts = products.filter(product => 
+                    userRoles.includes(product.roleId)
+                );
+
+                if (accessibleProducts.length === 0) {
+                    document.getElementById('downloads').innerHTML = `
+                        <div class="no-products">
+                            <i class="fas fa-lock"></i>
+                            <p>You don't have access to any products yet.</p>
+                            <p>Join our Discord server to purchase products!</p>
+                            <a href="https://discord.gg/zn" class="action-button" target="_blank">Join Server</a>
+                        </div>
+                    `;
+                    document.getElementById('products-count').textContent = '0';
+                    return;
+                }
+
+                const downloadsHTML = accessibleProducts.map(product => `
                     <div class="product-card">
                         <img src="${product.image}" alt="${product.name}" class="product-image">
                         <h3>${product.name}</h3>
                         <p>${product.description}</p>
-                        <button class="download-button" onclick="downloadProduct('${product.downloadUrl}')">
+                        <button class="download-button" onclick="downloadProduct('${product.downloadUrl}', '${product.name}')">
                             <i class="fas fa-download"></i> Download
                         </button>
                     </div>
                 `).join('');
 
                 document.getElementById('downloads').innerHTML = downloadsHTML;
-                document.getElementById('products-count').textContent = products.length;
+                document.getElementById('products-count').textContent = accessibleProducts.length;
 
             } catch (error) {
                 console.error('Error checking products:', error);
@@ -498,7 +531,7 @@
                     <div class="error">
                         <i class="fas fa-exclamation-triangle"></i>
                         <p>Failed to load products: ${error.message}</p>
-                        <a href="store.html" class="action-button">Visit Store</a>
+                        <a href="https://discord.gg/zn" class="action-button" target="_blank">Join Server</a>
                     </div>
                 `;
             }
@@ -521,9 +554,8 @@
             }
         }
 
-        function downloadProduct(url) {
-            // You can implement actual download logic here
-            alert('Download feature coming soon!');
+        function downloadProduct(url, productName) {
+            alert(`Downloading ${productName}... Feature coming soon!`);
         }
 
         window.onload = async function() {
