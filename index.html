@@ -356,6 +356,21 @@
             }
 
             try {
+                // First verify the user is authenticated
+                if (!await checkAuth()) {
+                    // Save current URL to return after login
+                    localStorage.setItem('return_url', window.location.href);
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // Verify this user has permission to view this transcript
+                const discordUser = JSON.parse(localStorage.getItem('discord_user'));
+                if (discordUser.id !== userId) {
+                    showError('You do not have permission to view this transcript');
+                    return;
+                }
+
                 const response = await fetch(
                     `https://api.github.com/repos/2cpe/ticket-transcripts/contents/transcripts/${fileName}`,
                     {
@@ -371,11 +386,6 @@
 
                 const data = await response.json();
                 const transcript = JSON.parse(atob(data.content));
-
-                // Verify this transcript belongs to the user
-                if (transcript.userId !== userId) {
-                    throw new Error('Unauthorized access');
-                }
 
                 displayTranscript(transcript);
             } catch (error) {

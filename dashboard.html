@@ -216,7 +216,7 @@
                 const transcriptsDiv = document.getElementById('transcripts');
                 
                 // Filter files for current user
-                const userFiles = files.filter(file => file.name.includes(`ticket_${discordUser.id}_`));
+                const userFiles = files.filter(file => file.name.startsWith(`ticket_${discordUser.id}_`));
                 
                 if (userFiles.length === 0) {
                     transcriptsDiv.innerHTML = `
@@ -237,6 +237,8 @@
                         const transcript = await contentResponse.json();
                         
                         const date = new Date(transcript.timestamp);
+                        const transcriptId = file.name.split('_')[2].replace('.json', '');
+                        
                         transcriptsHTML += `
                             <div class="transcript-card">
                                 <div class="transcript-header">
@@ -244,7 +246,7 @@
                                     <span class="transcript-date">${date.toLocaleDateString()}</span>
                                 </div>
                                 <div class="transcript-actions">
-                                    <button class="action-button view-button" onclick="viewTranscript('${transcript.id}')">
+                                    <button class="action-button view-button" onclick="viewTranscript('${transcriptId}')">
                                         <i class="fas fa-eye"></i> View Transcript
                                     </button>
                                 </div>
