@@ -237,13 +237,22 @@
                         const transcript = await contentResponse.json();
                         
                         const date = new Date(transcript.timestamp);
+                        const formattedDate = date.toLocaleString('ar-SA', {
+                            year: 'numeric',
+                            month: 'numeric',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: true
+                        });
+                        
                         const transcriptId = file.name.split('_')[2].replace('.json', '');
                         
                         transcriptsHTML += `
                             <div class="transcript-card">
                                 <div class="transcript-header">
                                     <span class="transcript-title">${transcript.channelName}</span>
-                                    <span class="transcript-date">${date.toLocaleDateString()}</span>
+                                    <span class="transcript-date">${formattedDate}</span>
                                 </div>
                                 <div class="transcript-actions">
                                     <button class="action-button view-button" onclick="viewTranscript('${transcriptId}')">

@@ -385,12 +385,23 @@
                 const decodedContent = decodeURIComponent(escape(msg.content));
                 const decodedAuthor = decodeURIComponent(escape(msg.author));
                 
+                // Format the timestamp
+                const messageDate = new Date(msg.timestamp);
+                const formattedDate = messageDate.toLocaleString('ar-SA', {
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                });
+                
                 html += `
                     <div class="message">
                         <div class="message-header">
                             <img class="author-avatar" src="${msg.authorAvatar || 'https://cdn.discordapp.com/embed/avatars/0.png'}" alt="Avatar">
                             <span class="author">${escapeHtml(decodedAuthor)}</span>
-                            <span class="timestamp">${escapeHtml(msg.timestamp)}</span>
+                            <span class="timestamp">${formattedDate}</span>
                         </div>
                         <div class="content">${escapeHtml(decodedContent)}</div>
                         ${msg.attachments.length > 0 ? `
@@ -408,10 +419,18 @@
 
             transcriptElement.innerHTML = html;
             
-            // Update header info
+            // Update header info with formatted date
             const decodedChannelName = decodeURIComponent(escape(transcript.channelName));
             document.getElementById('ticket-id').textContent = decodedChannelName;
-            document.getElementById('transcript-date').textContent = new Date(transcript.timestamp).toLocaleString();
+            const transcriptDate = new Date(transcript.timestamp);
+            document.getElementById('transcript-date').textContent = transcriptDate.toLocaleString('ar-SA', {
+                year: 'numeric',
+                month: 'numeric',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            });
         }
 
         function escapeHtml(unsafe) {
