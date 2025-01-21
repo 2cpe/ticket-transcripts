@@ -393,6 +393,40 @@
             position: relative;
             min-height: 500px; /* Adjust based on your needs */
         }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .button-group .action-button {
+            min-width: 160px;
+            margin-top: 0;
+        }
+
+        .store-button {
+            background: linear-gradient(45deg, #43b581, #43b581) !important;
+        }
+
+        .store-button:hover {
+            background: linear-gradient(45deg, #3ca374, #3ca374) !important;
+        }
+
+        /* Update responsive styles for buttons */
+        @media (max-width: 480px) {
+            .button-group {
+                flex-direction: column;
+                gap: 10px;
+                width: 100%;
+            }
+
+            .button-group .action-button {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -684,10 +718,16 @@
                             <i class="fas fa-store-alt"></i>
                             <p>You don't have any products yet.</p>
                             <p>Join our Discord server to get started!</p>
-                            <a href="https://discord.gg/zn" class="action-button" target="_blank">
-                                <i class="fab fa-discord"></i>
-                                Join Server
-                            </a>
+                            <div class="button-group">
+                                <a href="store.html" class="action-button store-button">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    Visit Store
+                                </a>
+                                <a href="https://discord.gg/zn" class="action-button" target="_blank">
+                                    <i class="fab fa-discord"></i>
+                                    Join Server
+                                </a>
+                            </div>
                         </div>
                     `;
                     document.getElementById('products-count').textContent = '0';
