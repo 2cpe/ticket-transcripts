@@ -13,7 +13,7 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Arabic UI', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #36393f;
             color: #dcddde;
             line-height: 1.6;
@@ -142,6 +142,14 @@
             color: #dcddde;
             font-size: 15px;
             word-wrap: break-word;
+            white-space: pre-wrap;
+            unicode-bidi: plaintext;
+        }
+
+        .content[dir="rtl"] {
+            margin-left: 0;
+            margin-right: 50px;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
         }
 
         .attachments {
@@ -244,6 +252,16 @@
             .attachments {
                 margin-left: 0;
             }
+
+            .content[dir="rtl"] {
+                margin-right: 0;
+            }
+        }
+
+        @font-face {
+            font-family: 'Arabic UI';
+            src: local('Segoe UI');
+            unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
         }
     </style>
 </head>
@@ -380,7 +398,13 @@
             const transcriptElement = document.getElementById('transcript');
             let html = '';
 
+            // Add text direction support for Arabic
+            const rtlCheck = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
+
             transcript.messages.forEach(msg => {
+                const isRTL = rtlCheck.test(msg.content);
+                const contentDir = isRTL ? 'rtl' : 'ltr';
+                
                 html += `
                     <div class="message">
                         <div class="message-header">
@@ -388,7 +412,9 @@
                             <span class="author">${escapeHtml(msg.author)}</span>
                             <span class="timestamp">${escapeHtml(msg.timestamp)}</span>
                         </div>
-                        <div class="content">${escapeHtml(msg.content)}</div>
+                        <div class="content" dir="${contentDir}" style="text-align: ${isRTL ? 'right' : 'left'}">
+                            ${decodeAndEscapeHtml(msg.content)}
+                        </div>
                         ${msg.attachments.length > 0 ? `
                             <div class="attachments">
                                 ${msg.attachments.map(url => `
@@ -404,7 +430,14 @@
 
             transcriptElement.innerHTML = html;
             document.getElementById('ticket-id').textContent = transcript.channelName;
-            document.getElementById('transcript-date').textContent = new Date(transcript.timestamp).toLocaleString();
+            document.getElementById('transcript-date').textContent = new Date(transcript.timestamp).toLocaleString('ar-SA');
+        }
+
+        function decodeAndEscapeHtml(text) {
+            // First decode any encoded entities
+            const decoded = decodeURIComponent(escape(text));
+            // Then escape HTML special characters
+            return escapeHtml(decoded);
         }
 
         function escapeHtml(unsafe) {
