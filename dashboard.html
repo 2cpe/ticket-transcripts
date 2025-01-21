@@ -265,6 +265,25 @@
                 justify-content: center;
             }
         }
+
+        .product-role {
+            margin: 10px 0;
+        }
+
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background-color: #43b581;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .role-badge i {
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -467,7 +486,7 @@
                         description: "Premium access to all features",
                         image: "https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png",
                         downloadUrl: "#",
-                        roleId: "1331100033755643924"
+                        roleId: "1327749873810014233"  // Premium role
                     },
                     {
                         id: 2,
@@ -475,7 +494,7 @@
                         description: "Essential tools package",
                         image: "https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png",
                         downloadUrl: "#",
-                        roleId: "1331100033755643924"
+                        roleId: "1331100033755643924"  // Tools role
                     }
                 ];
 
@@ -493,9 +512,9 @@
                 const guildMember = await guildResponse.json();
                 const userRoles = guildMember.roles || [];
 
-                // Filter products based on user's roles
+                // Filter products based on exact role match
                 const accessibleProducts = products.filter(product => 
-                    userRoles.includes(product.roleId)
+                    userRoles.includes(product.roleId) // Only show products where user has the exact matching role
                 );
 
                 if (accessibleProducts.length === 0) {
@@ -511,11 +530,17 @@
                     return;
                 }
 
+                // Generate HTML only for products the user has access to
                 const downloadsHTML = accessibleProducts.map(product => `
                     <div class="product-card">
                         <img src="${product.image}" alt="${product.name}" class="product-image">
                         <h3>${product.name}</h3>
                         <p>${product.description}</p>
+                        <div class="product-role">
+                            <span class="role-badge">
+                                <i class="fas fa-check-circle"></i> Access Granted
+                            </span>
+                        </div>
                         <button class="download-button" onclick="downloadProduct('${product.downloadUrl}', '${product.name}')">
                             <i class="fas fa-download"></i> Download
                         </button>
