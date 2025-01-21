@@ -13,7 +13,7 @@
         }
 
         body {
-            font-family: 'Arabic UI', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #36393f;
             color: #dcddde;
             line-height: 1.6;
@@ -99,10 +99,6 @@
             border-radius: 10px;
             padding: 20px;
             border: 1px solid #40444b;
-            max-height: 70vh;
-            overflow-y: auto;
-            overflow-x: hidden;
-            scrollbar-gutter: stable;
         }
 
         .message {
@@ -146,14 +142,6 @@
             color: #dcddde;
             font-size: 15px;
             word-wrap: break-word;
-            white-space: pre-wrap;
-            unicode-bidi: plaintext;
-        }
-
-        .content[dir="rtl"] {
-            margin-left: 0;
-            margin-right: 50px;
-            font-family: 'Segoe UI', 'Arial', sans-serif;
         }
 
         .attachments {
@@ -256,70 +244,6 @@
             .attachments {
                 margin-left: 0;
             }
-
-            .content[dir="rtl"] {
-                margin-right: 0;
-            }
-
-            #transcript {
-                max-height: calc(100vh - 200px);
-                -webkit-overflow-scrolling: touch;
-            }
-        }
-
-        @font-face {
-            font-family: 'Arabic UI';
-            src: local('Segoe UI');
-            unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
-        }
-
-        /* Custom Scrollbar Styles */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #2f3136;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #202225;
-            border-radius: 4px;
-            border: 2px solid #2f3136;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #40444b;
-        }
-
-        /* For Firefox */
-        * {
-            scrollbar-width: thin;
-            scrollbar-color: #202225 #2f3136;
-        }
-
-        /* Add smooth scroll behavior */
-        html {
-            scroll-behavior: smooth;
-        }
-
-        /* Add fade effect for long content */
-        #transcript::after {
-            content: '';
-            position: sticky;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 20px;
-            background: linear-gradient(transparent, #2f3136);
-            pointer-events: none;
-        }
-
-        /* Make sure content doesn't get hidden behind fade */
-        #transcript > *:last-child {
-            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -456,13 +380,7 @@
             const transcriptElement = document.getElementById('transcript');
             let html = '';
 
-            // Add text direction support for Arabic
-            const rtlCheck = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
-
             transcript.messages.forEach(msg => {
-                const isRTL = rtlCheck.test(msg.content);
-                const contentDir = isRTL ? 'rtl' : 'ltr';
-                
                 html += `
                     <div class="message">
                         <div class="message-header">
@@ -470,9 +388,7 @@
                             <span class="author">${escapeHtml(msg.author)}</span>
                             <span class="timestamp">${escapeHtml(msg.timestamp)}</span>
                         </div>
-                        <div class="content" dir="${contentDir}" style="text-align: ${isRTL ? 'right' : 'left'}">
-                            ${decodeAndEscapeHtml(msg.content)}
-                        </div>
+                        <div class="content">${escapeHtml(msg.content)}</div>
                         ${msg.attachments.length > 0 ? `
                             <div class="attachments">
                                 ${msg.attachments.map(url => `
@@ -488,14 +404,7 @@
 
             transcriptElement.innerHTML = html;
             document.getElementById('ticket-id').textContent = transcript.channelName;
-            document.getElementById('transcript-date').textContent = new Date(transcript.timestamp).toLocaleString('ar-SA');
-        }
-
-        function decodeAndEscapeHtml(text) {
-            // First decode any encoded entities
-            const decoded = decodeURIComponent(escape(text));
-            // Then escape HTML special characters
-            return escapeHtml(decoded);
+            document.getElementById('transcript-date').textContent = new Date(transcript.timestamp).toLocaleString();
         }
 
         function escapeHtml(unsafe) {
