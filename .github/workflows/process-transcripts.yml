@@ -11,43 +11,60 @@ jobs:
       - uses: actions/checkout@v2
       
       - name: Process Transcripts
+        shell: bash
         run: |
+          # Create processed directory if it doesn't exist
           mkdir -p processed
-          echo "[]" > processed/index.json  # Initialize empty array
+          
+          # Initialize index file as empty array
+          echo "[]" > processed/index.json
+          
+          # Check if there are any json files
+          shopt -s nullglob
           for file in transcripts/*.json; do
             if [ -f "$file" ]; then
-              # Get file hash
-              HASH=$(sha256sum "$file" | cut -d' ' -f1)
+              # Calculate hash
+              HASH=$(sha256sum "$file" | awk '{print $1}')
               
-              # Create index entry and append to index.json
-              jq -c --arg hash "$HASH" \
-                '{
-                  id: .id,
-                  userId: .userId,
-                  channelName: .channelName,
-                  timestamp: .timestamp,
+              # Process file and append to temporary file
+              jq --arg hash "$HASH" --arg filename "$file" '
+                {
+                  id,
+                  userId,
+                  channelName,
+                  timestamp,
                   hash: $hash,
-                  fileName: $hash + ".json"
-                }' "$file" >> processed/temp.json
+                  originalFile: $filename
+                }
+              ' "$file" >> processed/temp.json
               
-              # Copy file to processed directory with hashed name
-              cp "$file" "processed/$HASH.json"
+              # Copy the file with hashed name
+              cp "$file" "processed/${HASH}.json"
             fi
           done
           
-          # Combine all entries into a single array
+          # If we processed any files, combine them into an array
           if [ -f processed/temp.json ]; then
+            # Combine all objects into an array
             jq -s '.' processed/temp.json > processed/index.json
+            # Clean up temp file
             rm processed/temp.json
           fi
           
+          # List contents for debugging
+          echo "Contents of processed directory:"
+          ls -la processed/
+          
+          echo "Content of index.json:"
+          cat processed/index.json
+
       - name: Deploy to Protected Branch
+        if: success()
         run: |
           git config --global user.name 'GitHub Action'
           git config --global user.email 'action@github.com'
-          git checkout -b protected
           git add processed/
-          git commit -m "Process transcripts"
-          git push origin protected --force
+          git commit -m "Process transcripts" || echo "No changes to commit"
+          git push origin HEAD:protected --force
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
