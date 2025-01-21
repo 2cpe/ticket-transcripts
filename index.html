@@ -32,6 +32,29 @@
             margin-bottom: 20px;
             border: 1px solid #40444b;
             text-align: center;
+            position: relative;
+        }
+
+        .back-button {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #5865F2;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .back-button:hover {
+            background-color: #4752C4;
         }
 
         .header img {
@@ -50,6 +73,25 @@
         .header p {
             color: #b9bbbe;
             font-size: 14px;
+        }
+
+        .info-bar {
+            background-color: #2f3136;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #40444b;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            color: #b9bbbe;
+            font-size: 14px;
+            gap: 8px;
         }
 
         #transcript {
@@ -75,24 +117,24 @@
             display: flex;
             align-items: center;
             margin-bottom: 8px;
+            gap: 10px;
         }
 
         .author-avatar {
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            margin-right: 10px;
         }
 
         .author {
             font-weight: 600;
             color: #ffffff;
-            margin-right: 8px;
         }
 
         .timestamp {
             color: #72767d;
             font-size: 0.8em;
+            margin-left: auto;
         }
 
         .content {
@@ -100,6 +142,32 @@
             color: #dcddde;
             font-size: 15px;
             word-wrap: break-word;
+        }
+
+        .attachments {
+            margin-top: 10px;
+            margin-left: 50px;
+        }
+
+        .attachment {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background-color: #2f3136;
+            color: #00b0f4;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            border: 1px solid #40444b;
+            transition: background-color 0.2s;
+        }
+
+        .attachment:hover {
+            background-color: #36393f;
+            text-decoration: underline;
         }
 
         .loading {
@@ -119,39 +187,49 @@
             100% { transform: rotate(360deg); }
         }
 
-        .error {
-            background-color: #f04747;
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
+        .error-container {
+            background-color: #2f3136;
+            border-radius: 8px;
+            padding: 40px 20px;
             text-align: center;
-            margin: 20px 0;
+            border: 1px solid #ff4444;
+            margin-top: 20px;
         }
 
-        .info-bar {
-            background-color: #202225;
-            padding: 10px 20px;
-            border-radius: 5px;
+        .error-icon {
+            font-size: 48px;
+            color: #ff4444;
             margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            animation: pulse 2s infinite;
         }
 
-        .info-item {
-            display: flex;
-            align-items: center;
-            color: #b9bbbe;
-            font-size: 14px;
-        }
-
-        .info-item i {
-            margin-right: 5px;
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
         @media (max-width: 600px) {
             .container {
                 padding: 10px;
+                margin: 10px;
+            }
+
+            .header {
+                padding: 15px;
+            }
+
+            .back-button {
+                position: static;
+                transform: none;
+                margin-bottom: 15px;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .info-bar {
+                flex-direction: column;
+                gap: 10px;
             }
 
             .message {
@@ -163,116 +241,19 @@
                 margin-top: 10px;
             }
 
-            .info-bar {
-                flex-direction: column;
-                gap: 10px;
+            .attachments {
+                margin-left: 0;
             }
-        }
-
-        .error-container {
-            background-color: #2f3136;
-            border-radius: 8px;
-            padding: 40px 20px;
-            text-align: center;
-            border: 1px solid #ff4444;
-            box-shadow: 0 0 10px rgba(255, 68, 68, 0.1);
-        }
-
-        .error-icon {
-            font-size: 48px;
-            color: #ff4444;
-            margin-bottom: 20px;
-        }
-
-        .error-icon i {
-            animation: pulse 2s infinite;
-        }
-
-        .error-title {
-            color: #ffffff;
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-
-        .error-message {
-            color: #dcddde;
-            font-size: 16px;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-
-        .error-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background-color: #5865F2;
-            color: white;
-            text-decoration: none;
-            padding: 12px 24px;
-            border-radius: 4px;
-            font-weight: 500;
-            transition: background-color 0.2s;
-        }
-
-        .error-button:hover {
-            background-color: #4752C4;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        .error-details {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 5px;
-            text-align: left;
-        }
-
-        .error-tip {
-            margin-top: 15px;
-            padding: 10px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            font-style: italic;
-        }
-
-        .error-list {
-            list-style-type: none;
-            padding-left: 0;
-            margin: 10px 0;
-        }
-
-        .error-list li {
-            padding: 5px 0 5px 25px;
-            position: relative;
-        }
-
-        .error-list li:before {
-            content: "•";
-            position: absolute;
-            left: 10px;
-            color: var(--error-color);
-        }
-
-        .error-container {
-            --error-color: #ff4444;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <img src="https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png?ex=674a37bb&is=6748e63b&hm=78b76df79434c93afed039ba16a3050f32b25807d9a8669d7e6f1366b5313e07&" alt="Logo">
+            <button onclick="window.location.href='dashboard.html'" class="back-button">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </button>
+            <img src="https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png" alt="Logo">
             <h1>Ticket Transcript</h1>
             <p>A record of your support conversation</p>
         </div>
