@@ -459,9 +459,29 @@
             if (!discordUser) return;
             
             try {
-                const guildResponse = await fetch(`https://discord.com/api/users/@me/guilds/1327749495567552592/member`, {
+                // First load some sample products
+                const products = [
+                    {
+                        id: 1,
+                        name: "RaZo Premium",
+                        description: "Premium access to all features",
+                        image: "https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png",
+                        downloadUrl: "#"
+                    },
+                    {
+                        id: 2,
+                        name: "RaZo Tools",
+                        description: "Essential tools package",
+                        image: "https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png",
+                        downloadUrl: "#"
+                    }
+                ];
+
+                // Check user's roles
+                const guildResponse = await fetch('https://discord.com/api/users/@me/guilds/1327749495567552592/member', {
                     headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('discord_token')}`
+                        'Authorization': `Bearer ${localStorage.getItem('discord_token')}`,
+                        'Content-Type': 'application/json'
                     }
                 });
 
@@ -473,7 +493,19 @@
                 const hasProductRole = guildMember.roles.includes('1331100033755643924');
                 
                 if (hasProductRole) {
-                    loadProducts();
+                    const downloadsHTML = products.map(product => `
+                        <div class="product-card">
+                            <img src="${product.image}" alt="${product.name}" class="product-image">
+                            <h3>${product.name}</h3>
+                            <p>${product.description}</p>
+                            <button class="download-button" onclick="downloadProduct('${product.downloadUrl}')">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                        </div>
+                    `).join('');
+
+                    document.getElementById('downloads').innerHTML = downloadsHTML;
+                    document.getElementById('products-count').textContent = products.length;
                 } else {
                     document.getElementById('downloads').innerHTML = `
                         <div class="no-products">
@@ -482,36 +514,18 @@
                             <a href="store.html" class="action-button">Visit Store</a>
                         </div>
                     `;
+                    document.getElementById('products-count').textContent = '0';
                 }
             } catch (error) {
                 console.error('Error checking products:', error);
+                document.getElementById('downloads').innerHTML = `
+                    <div class="error">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Failed to load products: ${error.message}</p>
+                        <a href="store.html" class="action-button">Visit Store</a>
+                    </div>
+                `;
             }
-        }
-
-        function loadProducts() {
-            const products = [
-                {
-                    id: 1,
-                    name: "Product 1",
-                    description: "Description of product 1",
-                    image: "product1.jpg",
-                    downloadUrl: "path/to/download1"
-                },
-                // Add more products as needed
-            ];
-
-            const downloadsHTML = products.map(product => `
-                <div class="product-card">
-                    <img src="${product.image}" alt="${product.name}" class="product-image">
-                    <h3>${product.name}</h3>
-                    <p>${product.description}</p>
-                    <button class="download-button" onclick="downloadProduct('${product.downloadUrl}')">
-                        <i class="fas fa-download"></i> Download
-                    </button>
-                </div>
-            `).join('');
-
-            document.getElementById('downloads').innerHTML = downloadsHTML;
         }
 
         function switchTab(tabName) {
@@ -540,6 +554,15 @@
             if (await checkAuth()) {
                 loadTranscripts();
                 document.getElementById('welcome-username').textContent = discordUser.username;
+                
+                // Count tickets
+                const response = await fetch('https://api.github.com/repos/2cpe/ticket-transcripts/contents/transcripts');
+                const files = await response.json();
+                const userFiles = files.filter(file => file.name.startsWith(`ticket_${discordUser.id}_`));
+                document.getElementById('tickets-count').textContent = userFiles.length;
+                
+                // Check products
+                checkUserProducts();
             }
         };
     </script>
