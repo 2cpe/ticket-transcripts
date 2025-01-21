@@ -13,6 +13,14 @@
             "src": "/api/auth",
             "methods": ["POST", "OPTIONS"],
             "dest": "/api/auth.js"
+        },
+        {
+            "handle": "filesystem"
+        },
+        {
+            "src": "/(.*)",
+            "status": 404,
+            "dest": "/404.html"
         }
     ]
 } 

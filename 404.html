@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found | RaZo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #36393f;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .error-container {
+            text-align: center;
+            padding: 40px;
+            max-width: 600px;
+            background: linear-gradient(145deg, #2f3136, #36393f);
+            border-radius: 20px;
+            border: 1px solid #40444b;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .error-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at top right, rgba(88, 101, 242, 0.1), transparent);
+            pointer-events: none;
+        }
+
+        .error-icon {
+            font-size: 80px;
+            color: #5865f2;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+            background: linear-gradient(45deg, #5865f2, #7289da);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .error-title {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #5865f2, #7289da);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .error-message {
+            color: #b9bbbe;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(45deg, rgba(88, 101, 242, 0.9), rgba(114, 137, 218, 0.9));
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .action-button.home {
+            background: linear-gradient(45deg, rgba(67, 181, 129, 0.9), rgba(103, 214, 147, 0.9));
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(88, 101, 242, 0.3);
+        }
+
+        .action-button.home:hover {
+            box-shadow: 0 6px 20px rgba(67, 181, 129, 0.3);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @media (max-width: 480px) {
+            .error-container {
+                margin: 20px;
+                padding: 30px;
+            }
+
+            .error-icon {
+                font-size: 60px;
+            }
+
+            .error-title {
+                font-size: 28px;
+            }
+
+            .error-message {
+                font-size: 16px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .action-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <i class="fas fa-ghost error-icon"></i>
+        <h1 class="error-title">404 - Page Not Found</h1>
+        <p class="error-message">Oops! The page you're looking for seems to have vanished into the digital void.</p>
+        <div class="button-group">
+            <a href="/" class="action-button home">
+                <i class="fas fa-home"></i>
+                Go Home
+            </a>
+            <a href="https://discord.gg/zn" class="action-button" target="_blank">
+                <i class="fab fa-discord"></i>
+                Join Discord
+            </a>
+        </div>
+    </div>
+</body>
+</html> 
