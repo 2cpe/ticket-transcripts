@@ -1,0 +1,53 @@
+name: Process Transcripts
+on:
+  push:
+    paths:
+      - 'transcripts/**'
+
+jobs:
+  process-transcripts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Process Transcripts
+        run: |
+          mkdir -p processed
+          echo "[]" > processed/index.json  # Initialize empty array
+          for file in transcripts/*.json; do
+            if [ -f "$file" ]; then
+              # Get file hash
+              HASH=$(sha256sum "$file" | cut -d' ' -f1)
+              
+              # Create index entry and append to index.json
+              jq -c --arg hash "$HASH" \
+                '{
+                  id: .id,
+                  userId: .userId,
+                  channelName: .channelName,
+                  timestamp: .timestamp,
+                  hash: $hash,
+                  fileName: $hash + ".json"
+                }' "$file" >> processed/temp.json
+              
+              # Copy file to processed directory with hashed name
+              cp "$file" "processed/$HASH.json"
+            fi
+          done
+          
+          # Combine all entries into a single array
+          if [ -f processed/temp.json ]; then
+            jq -s '.' processed/temp.json > processed/index.json
+            rm processed/temp.json
+          fi
+          
+      - name: Deploy to Protected Branch
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          git checkout -b protected
+          git add processed/
+          git commit -m "Process transcripts"
+          git push origin protected --force
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
