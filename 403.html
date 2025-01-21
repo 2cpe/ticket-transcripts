@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - Page Not Found | RaZo</title>
+    <title>403 - Access Denied | RaZo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* Same base styles as 404.html */
         * {
             margin: 0;
             padding: 0;
@@ -34,6 +35,7 @@
             overflow: hidden;
         }
 
+        /* Unique gradient for 403 */
         .error-container::before {
             content: '';
             position: absolute;
@@ -41,16 +43,15 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: radial-gradient(circle at top right, rgba(88, 101, 242, 0.1), transparent);
+            background: radial-gradient(circle at top right, rgba(237, 66, 69, 0.1), transparent);
             pointer-events: none;
         }
 
         .error-icon {
             font-size: 80px;
-            color: #5865f2;
             margin-bottom: 20px;
             animation: float 3s ease-in-out infinite;
-            background: linear-gradient(45deg, #5865f2, #7289da);
+            background: linear-gradient(45deg, #ed4245, #f04747);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -59,11 +60,12 @@
             font-size: 36px;
             font-weight: 800;
             margin-bottom: 15px;
-            background: linear-gradient(45deg, #5865f2, #7289da);
+            background: linear-gradient(45deg, #ed4245, #f04747);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
+        /* Rest of the styles same as 404.html */
         .error-message {
             color: #b9bbbe;
             font-size: 18px;
@@ -143,11 +145,11 @@
 </head>
 <body>
     <div class="error-container">
-        <i class="fas fa-ghost error-icon"></i>
-        <h1 class="error-title">404 - Page Not Found</h1>
-        <p class="error-message">Oops! The page you're looking for seems to have vanished into the digital void.</p>
+        <i class="fas fa-lock error-icon"></i>
+        <h1 class="error-title">403 - Access Denied</h1>
+        <p class="error-message">Sorry! You don't have permission to access this page.</p>
         <div class="button-group">
-            <a href="/dashboard.html" class="action-button home">
+            <a href="/" class="action-button home">
                 <i class="fas fa-home"></i>
                 Go Home
             </a>
