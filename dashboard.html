@@ -291,17 +291,18 @@
             padding: 60px 30px;
             text-align: center;
             border: 1px solid #40444b;
-            margin: 40px auto;
+            margin: 0 auto;
             max-width: 400px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            min-height: 400px;
-            position: relative;
+            position: absolute;
             top: 50%;
-            transform: translateY(-10%);
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
         }
 
         .no-products i {
@@ -314,28 +315,20 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .no-products .content-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            gap: 15px;
-        }
-
         .no-products p {
             color: #b9bbbe;
-            margin: 0;
+            margin: 10px 0;
             font-size: 16px;
             line-height: 1.6;
             max-width: 280px;
         }
 
         .no-products p:first-of-type {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 600;
             color: #ffffff;
-            margin-bottom: 5px;
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
         }
 
         .no-products .action-button {
@@ -347,7 +340,7 @@
             text-decoration: none;
             padding: 14px 28px;
             border-radius: 8px;
-            margin-top: 25px;
+            margin-top: 30px;
             font-weight: 600;
             font-size: 16px;
             transition: all 0.3s ease;
@@ -380,25 +373,25 @@
             }
         }
 
-        /* Add responsive adjustments */
+        /* Update responsive styles */
         @media (max-width: 480px) {
             .no-products {
                 padding: 40px 20px;
-                margin: 20px auto;
+                position: relative;
+                top: 50px;
+                transform: translateX(-50%);
+                margin-bottom: 100px;
             }
 
-            .no-products i {
-                font-size: 48px;
+            #downloads-section {
+                min-height: 400px;
             }
+        }
 
-            .no-products p:first-of-type {
-                font-size: 18px;
-            }
-
-            .no-products .action-button {
-                padding: 12px 24px;
-                font-size: 14px;
-            }
+        /* Update the downloads-section to handle absolute positioning */
+        #downloads-section {
+            position: relative;
+            min-height: 500px; /* Adjust based on your needs */
         }
     </style>
 </head>
@@ -689,14 +682,12 @@
                     document.getElementById('downloads').innerHTML = `
                         <div class="no-products">
                             <i class="fas fa-store-alt"></i>
-                            <div class="content-wrapper">
-                                <p>You don't have access to any products yet.</p>
-                                <p>Join our Discord server to purchase products!</p>
-                                <a href="https://discord.gg/zn" class="action-button" target="_blank">
-                                    <i class="fab fa-discord"></i>
-                                    Join Server
-                                </a>
-                            </div>
+                            <p>You don't have access to any products yet.</p>
+                            <p>Join our Discord server to purchase products!</p>
+                            <a href="https://discord.gg/zn" class="action-button" target="_blank">
+                                <i class="fab fa-discord"></i>
+                                Join Server
+                            </a>
                         </div>
                     `;
                     document.getElementById('products-count').textContent = '0';
