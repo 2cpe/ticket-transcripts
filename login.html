@@ -157,7 +157,8 @@
             `?client_id=${CLIENT_ID}` +
             `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
             `&response_type=code` +
-            `&scope=${encodeURIComponent('identify guilds')}` +
+            `&scope=${encodeURIComponent('identify guilds guilds.members.read')}` +
+            `&permissions=0` +
             `&state=login`;
     </script>
 </body>

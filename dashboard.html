@@ -477,33 +477,7 @@
                     }
                 ];
 
-                // First get user's guilds
-                const guildsResponse = await fetch('https://discord.com/api/users/@me/guilds', {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('discord_token')}`
-                    }
-                });
-
-                if (!guildsResponse.ok) {
-                    throw new Error('Failed to fetch user guilds');
-                }
-
-                const guilds = await guildsResponse.json();
-                const isInServer = guilds.some(guild => guild.id === '1327749495567552592');
-
-                if (!isInServer) {
-                    document.getElementById('downloads').innerHTML = `
-                        <div class="no-products">
-                            <i class="fas fa-lock"></i>
-                            <p>You need to be a member of our Discord server to access products.</p>
-                            <a href="https://discord.gg/zn" class="action-button" target="_blank">Join Server</a>
-                        </div>
-                    `;
-                    document.getElementById('products-count').textContent = '0';
-                    return;
-                }
-
-                // If user is in server, show products
+                // For now, just show the products without guild check
                 const downloadsHTML = products.map(product => `
                     <div class="product-card">
                         <img src="${product.image}" alt="${product.name}" class="product-image">
@@ -548,8 +522,8 @@
         }
 
         function downloadProduct(url) {
-            // Implement download logic here
-            window.open(url, '_blank');
+            // You can implement actual download logic here
+            alert('Download feature coming soon!');
         }
 
         window.onload = async function() {
