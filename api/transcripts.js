@@ -33,34 +33,48 @@ module.exports = async (req, res) => {
             auth: process.env.GITHUB_TOKEN
         });
 
-        // Get all transcript files directly
-        const { data: files } = await octokit.repos.getContent({
-            owner: '2cpe',
-            repo: 'ticket-transcripts',
-            path: 'transcripts'
-        });
+        try {
+            // Try to get the index file first
+            const { data: indexFile } = await octokit.repos.getContent({
+                owner: '2cpe',
+                repo: 'ticket-transcripts',
+                path: 'processed/index.json',
+                ref: 'protected'
+            });
 
-        // Filter and process transcripts for this user
-        const userTranscripts = [];
-        for (const file of files) {
-            if (file.name.startsWith(`ticket_${userId}_`)) {
-                const { data: content } = await octokit.repos.getContent({
-                    owner: '2cpe',
-                    repo: 'ticket-transcripts',
-                    path: file.path
-                });
+            const index = JSON.parse(Buffer.from(indexFile.content, 'base64').toString());
+            const userTranscripts = index.filter(entry => entry.userId === userId);
 
-                const transcript = JSON.parse(Buffer.from(content.content, 'base64').toString());
-                userTranscripts.push({
-                    id: transcript.id,
-                    channelName: transcript.channelName,
-                    timestamp: transcript.timestamp,
-                    fileName: file.name
-                });
+            res.json(userTranscripts);
+        } catch (error) {
+            // If index file doesn't exist, fall back to direct file listing
+            const { data: files } = await octokit.repos.getContent({
+                owner: '2cpe',
+                repo: 'ticket-transcripts',
+                path: 'transcripts'
+            });
+
+            const userTranscripts = [];
+            for (const file of files) {
+                if (file.name.startsWith(`ticket_${userId}_`)) {
+                    const { data: content } = await octokit.repos.getContent({
+                        owner: '2cpe',
+                        repo: 'ticket-transcripts',
+                        path: file.path
+                    });
+
+                    const transcript = JSON.parse(Buffer.from(content.content, 'base64').toString());
+                    userTranscripts.push({
+                        id: transcript.id,
+                        channelName: transcript.channelName,
+                        timestamp: transcript.timestamp,
+                        fileName: file.name
+                    });
+                }
             }
-        }
 
-        res.json(userTranscripts);
+            res.json(userTranscripts);
+        }
 
     } catch (error) {
         console.error('Error:', error);
