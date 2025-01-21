@@ -354,6 +354,12 @@
     <script>
         let discordUser = null;
 
+        const CACHE_DURATION = 60000; // 1 minute cache
+        let roleCache = {
+            timestamp: 0,
+            roles: null
+        };
+
         async function checkAuth() {
             const accessToken = localStorage.getItem('discord_token');
             if (!accessToken) {
@@ -486,7 +492,7 @@
                         description: "Premium access to all features",
                         image: "https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png",
                         downloadUrl: "#",
-                        roleId: "1327749873810014233"  // Premium role
+                        roleId: "1327749873810014233"
                     },
                     {
                         id: 2,
@@ -494,27 +500,73 @@
                         description: "Essential tools package",
                         image: "https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png",
                         downloadUrl: "#",
-                        roleId: "1331100033755643924"  // Tools role
+                        roleId: "1331100033755643924"
                     }
                 ];
 
-                // Fetch user's guild member data
-                const guildResponse = await fetch(`https://discord.com/api/users/@me/guilds/1327749495567552592/member`, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('discord_token')}`
+                let userRoles;
+                
+                // Check cache first
+                if (roleCache.roles && (Date.now() - roleCache.timestamp) < CACHE_DURATION) {
+                    userRoles = roleCache.roles;
+                } else {
+                    try {
+                        const guildResponse = await fetch(`https://discord.com/api/users/@me/guilds/1327749495567552592/member`, {
+                            headers: {
+                                'Authorization': `Bearer ${localStorage.getItem('discord_token')}`,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (guildResponse.status === 429) { // Rate limit hit
+                            const rateLimit = await guildResponse.json();
+                            const retryAfter = rateLimit.retry_after * 1000;
+                            
+                            // Use cached roles if available
+                            if (roleCache.roles) {
+                                userRoles = roleCache.roles;
+                            } else {
+                                // Wait and retry once
+                                await new Promise(resolve => setTimeout(resolve, retryAfter + 100));
+                                const retryResponse = await fetch(`https://discord.com/api/users/@me/guilds/1327749495567552592/member`, {
+                                    headers: {
+                                        'Authorization': `Bearer ${localStorage.getItem('discord_token')}`,
+                                        'Content-Type': 'application/json'
+                                    }
+                                });
+                                
+                                if (!retryResponse.ok) {
+                                    throw new Error('Failed to fetch guild member data after retry');
+                                }
+                                
+                                const guildMember = await retryResponse.json();
+                                userRoles = guildMember.roles || [];
+                            }
+                        } else if (!guildResponse.ok) {
+                            throw new Error('Failed to fetch guild member data');
+                        } else {
+                            const guildMember = await guildResponse.json();
+                            userRoles = guildMember.roles || [];
+                        }
+
+                        // Update cache
+                        roleCache = {
+                            timestamp: Date.now(),
+                            roles: userRoles
+                        };
+                    } catch (error) {
+                        // Use cached roles if available when there's an error
+                        if (roleCache.roles) {
+                            userRoles = roleCache.roles;
+                        } else {
+                            throw error;
+                        }
                     }
-                });
-
-                if (!guildResponse.ok) {
-                    throw new Error('Failed to fetch guild member data');
                 }
-
-                const guildMember = await guildResponse.json();
-                const userRoles = guildMember.roles || [];
 
                 // Filter products based on exact role match
                 const accessibleProducts = products.filter(product => 
-                    userRoles.includes(product.roleId) // Only show products where user has the exact matching role
+                    userRoles.includes(product.roleId)
                 );
 
                 if (accessibleProducts.length === 0) {
@@ -530,7 +582,6 @@
                     return;
                 }
 
-                // Generate HTML only for products the user has access to
                 const downloadsHTML = accessibleProducts.map(product => `
                     <div class="product-card">
                         <img src="${product.image}" alt="${product.name}" class="product-image">
