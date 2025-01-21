@@ -27,170 +27,224 @@
 
         .store-header {
             text-align: center;
-            padding: 40px 20px;
+            padding: 60px 20px;
             margin-bottom: 40px;
-            background: linear-gradient(45deg, #2f3136, #36393f);
-            border-radius: 15px;
+            background: linear-gradient(135deg, #1a1b1e, #2f3136);
+            border-radius: 20px;
             border: 1px solid #40444b;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .store-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at top right, rgba(88, 101, 242, 0.1), transparent);
+            pointer-events: none;
         }
 
         .store-logo {
-            width: 120px;
-            height: 120px;
-            margin-bottom: 20px;
+            width: 140px;
+            height: 140px;
+            margin-bottom: 25px;
             animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 4px 15px rgba(0, 0, 0, 0.2));
         }
 
         .store-header h1 {
-            font-size: 36px;
-            margin-bottom: 10px;
+            font-size: 42px;
+            margin-bottom: 15px;
             background: linear-gradient(45deg, #5865f2, #7289da);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            letter-spacing: -1px;
         }
 
         .store-header p {
             color: #b9bbbe;
-            font-size: 18px;
+            font-size: 20px;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
             padding: 20px 0;
+            max-width: 1000px;
+            margin: 0 auto;
         }
 
         .product-card {
-            background-color: #2f3136;
-            border-radius: 10px;
+            background: linear-gradient(145deg, #2f3136, #36393f);
+            border-radius: 15px;
             border: 1px solid #40444b;
             overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.3s ease;
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
         }
 
         .product-image {
             width: 100%;
             height: 200px;
             object-fit: cover;
+            border-bottom: 1px solid #40444b;
         }
 
         .product-content {
-            padding: 20px;
+            padding: 25px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .product-title {
-            font-size: 20px;
-            margin-bottom: 10px;
+            font-size: 24px;
+            margin-bottom: 12px;
             color: #ffffff;
+            font-weight: 600;
+            height: 35px;
+            display: flex;
+            align-items: center;
         }
 
         .product-description {
             color: #b9bbbe;
-            margin-bottom: 15px;
-            font-size: 14px;
+            margin-bottom: 20px;
+            font-size: 15px;
+            line-height: 1.6;
+            height: 48px;
+            overflow: hidden;
         }
 
         .product-price {
-            font-size: 24px;
-            font-weight: 600;
+            font-size: 32px;
+            font-weight: 700;
             color: #5865f2;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            height: 40px;
+        }
+
+        .product-price::before {
+            content: '';
+            display: block;
+            width: 30px;
+            height: 2px;
+            background: linear-gradient(90deg, #5865f2, transparent);
         }
 
         .product-features {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            background-color: #2b2d31;
+            padding: 15px;
+            border-radius: 10px;
+            height: auto;
+            flex: 1;
         }
 
         .feature-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
+            gap: 10px;
+            margin-bottom: 12px;
             color: #dcddde;
-            font-size: 14px;
+            font-size: 15px;
+        }
+
+        .feature-item:last-child {
+            margin-bottom: 0;
         }
 
         .feature-item i {
             color: #43b581;
+            font-size: 16px;
         }
 
         .buy-button {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             background: linear-gradient(45deg, #5865f2, #7289da);
             color: white;
-            padding: 12px 24px;
-            border-radius: 5px;
+            padding: 14px 28px;
+            border-radius: 8px;
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 16px;
             transition: all 0.3s ease;
             width: 100%;
             justify-content: center;
+            box-shadow: 0 4px 15px rgba(88, 101, 242, 0.2);
         }
 
         .buy-button:hover {
             background: linear-gradient(45deg, #4752c4, #5865f2);
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(88, 101, 242, 0.3);
         }
 
-        .category-tabs {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-
-        .category-tab {
-            padding: 10px 20px;
-            background-color: #2f3136;
-            border: 1px solid #40444b;
-            border-radius: 5px;
-            color: #dcddde;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .category-tab.active {
-            background-color: #5865f2;
-            color: white;
-            border-color: #5865f2;
+        .buy-button i {
+            font-size: 18px;
         }
 
         @keyframes float {
             0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-15px); }
             100% { transform: translateY(0px); }
         }
 
         @media (max-width: 768px) {
-            .products-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            .store-header {
+                padding: 40px 20px;
+                margin-bottom: 30px;
+            }
+
+            .store-logo {
+                width: 120px;
+                height: 120px;
             }
 
             .store-header h1 {
-                font-size: 28px;
+                font-size: 32px;
             }
 
             .store-header p {
                 font-size: 16px;
             }
 
-            .category-tabs {
-                gap: 10px;
+            .product-title {
+                font-size: 20px;
             }
 
-            .category-tab {
-                padding: 8px 16px;
-                font-size: 14px;
+            .product-price {
+                font-size: 28px;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+                max-width: 450px;
+            }
+            
+            .product-card {
+                max-width: 100%;
             }
         }
     </style>
@@ -203,15 +257,9 @@
             <p>Premium Tools & Services</p>
         </header>
 
-        <div class="category-tabs">
-            <button class="category-tab active" onclick="filterProducts('all')">All Products</button>
-            <button class="category-tab" onclick="filterProducts('premium')">Premium</button>
-            <button class="category-tab" onclick="filterProducts('tools')">Tools</button>
-        </div>
-
         <div class="products-grid">
             <!-- Premium Product -->
-            <div class="product-card" data-category="premium">
+            <div class="product-card">
                 <img src="https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png" alt="Premium" class="product-image">
                 <div class="product-content">
                     <h3 class="product-title">RaZo Premium</h3>
@@ -239,7 +287,7 @@
             </div>
 
             <!-- Tools Product -->
-            <div class="product-card" data-category="tools">
+            <div class="product-card">
                 <img src="https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png" alt="Tools" class="product-image">
                 <div class="product-content">
                     <h3 class="product-title">RaZo Tools</h3>
@@ -267,27 +315,5 @@
             </div>
         </div>
     </div>
-
-    <script>
-        function filterProducts(category) {
-            // Update active tab
-            document.querySelectorAll('.category-tab').forEach(tab => {
-                tab.classList.remove('active');
-                if (tab.textContent.toLowerCase().includes(category)) {
-                    tab.classList.add('active');
-                }
-            });
-
-            // Filter products
-            const products = document.querySelectorAll('.product-card');
-            products.forEach(product => {
-                if (category === 'all' || product.dataset.category === category) {
-                    product.style.display = 'block';
-                } else {
-                    product.style.display = 'none';
-                }
-            });
-        }
-    </script>
 </body>
 </html> 
