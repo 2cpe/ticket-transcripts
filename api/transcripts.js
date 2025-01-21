@@ -4,6 +4,7 @@ module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', 'https://2cpe.github.io');
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Authorization');
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
 
     if (req.method === 'OPTIONS') {
         return res.status(200).end();

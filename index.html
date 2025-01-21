@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Ticket Transcript</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -143,8 +142,6 @@
             color: #dcddde;
             font-size: 15px;
             word-wrap: break-word;
-            white-space: pre-wrap;
-            unicode-bidi: plaintext;
         }
 
         .attachments {
@@ -247,10 +244,6 @@
             .attachments {
                 margin-left: 0;
             }
-        }
-
-        [dir="auto"] {
-            text-align: start;
         }
     </style>
 </head>
@@ -388,17 +381,18 @@
             let html = '';
 
             transcript.messages.forEach(msg => {
-                // Decode content if it's base64 encoded
-                const content = msg.content;
+                // Decode content if it's encoded
+                const decodedContent = decodeURIComponent(escape(msg.content));
+                const decodedAuthor = decodeURIComponent(escape(msg.author));
                 
                 html += `
                     <div class="message">
                         <div class="message-header">
                             <img class="author-avatar" src="${msg.authorAvatar || 'https://cdn.discordapp.com/embed/avatars/0.png'}" alt="Avatar">
-                            <span class="author" dir="auto">${escapeHtml(msg.author)}</span>
+                            <span class="author">${escapeHtml(decodedAuthor)}</span>
                             <span class="timestamp">${escapeHtml(msg.timestamp)}</span>
                         </div>
-                        <div class="content" dir="auto">${escapeHtml(content)}</div>
+                        <div class="content">${escapeHtml(decodedContent)}</div>
                         ${msg.attachments.length > 0 ? `
                             <div class="attachments">
                                 ${msg.attachments.map(url => `
@@ -413,12 +407,14 @@
             });
 
             transcriptElement.innerHTML = html;
-            document.getElementById('ticket-id').textContent = transcript.channelName;
-            document.getElementById('transcript-date').textContent = new Date(transcript.timestamp).toLocaleString('ar-SA');
+            
+            // Update header info
+            const decodedChannelName = decodeURIComponent(escape(transcript.channelName));
+            document.getElementById('ticket-id').textContent = decodedChannelName;
+            document.getElementById('transcript-date').textContent = new Date(transcript.timestamp).toLocaleString();
         }
 
         function escapeHtml(unsafe) {
-            if (!unsafe) return '';
             return unsafe
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
