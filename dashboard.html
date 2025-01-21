@@ -284,6 +284,67 @@
         .role-badge i {
             font-size: 14px;
         }
+
+        .no-products {
+            background-color: #2f3136;
+            border-radius: 10px;
+            padding: 40px 20px;
+            text-align: center;
+            border: 1px solid #40444b;
+            margin: 20px auto;
+            max-width: 400px;
+        }
+
+        .no-products i {
+            font-size: 48px;
+            color: #5865f2;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .no-products p {
+            color: #dcddde;
+            margin: 10px 0;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .no-products p:first-of-type {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .no-products .action-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #5865f2;
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .no-products .action-button:hover {
+            background-color: #4752c4;
+            transform: translateY(-2px);
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
     </style>
 </head>
 <body>
@@ -572,10 +633,13 @@
                 if (accessibleProducts.length === 0) {
                     document.getElementById('downloads').innerHTML = `
                         <div class="no-products">
-                            <i class="fas fa-lock"></i>
+                            <i class="fas fa-store"></i>
                             <p>You don't have access to any products yet.</p>
                             <p>Join our Discord server to purchase products!</p>
-                            <a href="https://discord.gg/zn" class="action-button" target="_blank">Join Server</a>
+                            <a href="https://discord.gg/zn" class="action-button" target="_blank">
+                                <i class="fab fa-discord"></i>
+                                Join Server
+                            </a>
                         </div>
                     `;
                     document.getElementById('products-count').textContent = '0';
