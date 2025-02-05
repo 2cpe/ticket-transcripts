@@ -19,7 +19,7 @@ module.exports = async (req, res) => {
             },
             body: new URLSearchParams({
                 client_id: '1327745611230871572',
-                client_secret: 'xIa8Blidj_7k-VjqvJ7wx96nQLKClCXW',
+                client_secret: '4wDibBY1yuhFu4e9hwJF9tQCvu3l1YIk',
                 grant_type: 'authorization_code',
                 code: code,
                 redirect_uri: 'https://2cpe.github.io/ticket-transcripts/callback.html'
