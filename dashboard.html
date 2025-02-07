@@ -438,7 +438,7 @@
             border: 1px solid var(--card-border);
             position: relative;
             overflow: hidden;
-            max-width: 500px;
+            max-width: 400px;
             margin: 40px auto;
         }
 
@@ -451,14 +451,18 @@
             height: 100%;
             background: linear-gradient(45deg, rgba(196, 164, 86, 0.05), transparent);
             pointer-events: none;
-            opacity: 0.5;
+            z-index: 1;
         }
 
-        .no-products i {
+        .no-products-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .no-products .store-icon {
             font-size: 64px;
             color: var(--accent-gold);
             margin-bottom: 25px;
-            position: relative;
             animation: float 3s ease-in-out infinite;
         }
 
@@ -466,7 +470,7 @@
             font-size: 28px;
             color: var(--text-light);
             margin-bottom: 15px;
-            position: relative;
+            font-weight: 600;
         }
 
         .no-products p {
@@ -474,69 +478,38 @@
             font-size: 16px;
             line-height: 1.6;
             margin-bottom: 30px;
-            position: relative;
         }
 
         .no-products .button-group {
             display: flex;
             gap: 15px;
             justify-content: center;
-            position: relative;
         }
 
         .no-products .action-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: linear-gradient(45deg, var(--accent-gold), var(--accent-bronze));
-            color: var(--primary-black);
-            padding: 15px 30px;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            min-width: 180px;
+            min-width: 160px;
+            padding: 14px 28px;
         }
 
-        .no-products .action-button.store {
+        .no-products .store-button {
+            background: linear-gradient(45deg, var(--accent-gold), var(--accent-bronze));
+        }
+
+        .no-products .discord-button {
             background: var(--secondary-black);
             color: var(--accent-gold);
             border: 2px solid var(--accent-gold);
         }
 
-        .no-products .action-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transform: translateX(-100%);
-            transition: transform 0.6s ease;
-        }
-
-        .no-products .action-button:hover::before {
-            transform: translateX(100%);
-        }
-
-        .no-products .action-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(196, 164, 86, 0.2);
-        }
-
         @keyframes float {
-            0% { transform: translateY(0); }
+            0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
-            100% { transform: translateY(0); }
         }
 
         @media (max-width: 480px) {
             .no-products {
-                padding: 40px 20px;
                 margin: 20px;
+                padding: 40px 20px;
             }
 
             .no-products .button-group {
@@ -546,6 +519,12 @@
             .no-products .action-button {
                 width: 100%;
             }
+        }
+
+        /* Update the downloads-section to handle absolute positioning */
+        #downloads-section {
+            position: relative;
+            min-height: 500px; /* Adjust based on your needs */
         }
 
         .button-group {
@@ -655,18 +634,20 @@
             <div id="downloads-section" class="tab-section">
                 <div id="downloads" class="downloads-grid">
                     <div class="no-products">
-                        <i class="fas fa-store-alt"></i>
-                        <h3>No Products Available</h3>
-                        <p>You don't have any products yet. Visit our store or join our Discord server to get started!</p>
-                        <div class="button-group">
-                            <a href="store.html" class="action-button store">
-                                <i class="fas fa-shopping-cart"></i>
-                                Visit Store
-                            </a>
-                            <a href="https://discord.gg/zn" class="action-button">
-                                <i class="fab fa-discord"></i>
-                                Join Discord
-                            </a>
+                        <div class="no-products-content">
+                            <i class="fas fa-store-alt store-icon"></i>
+                            <h3>You don't have any products yet</h3>
+                            <p>Join our Discord server to get started!</p>
+                            <div class="button-group">
+                                <a href="store.html" class="action-button store-button">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    Visit Store
+                                </a>
+                                <a href="https://discord.gg/zn" class="action-button discord-button">
+                                    <i class="fab fa-discord"></i>
+                                    Join Server
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -906,16 +887,16 @@
                     document.getElementById('downloads').innerHTML = `
                         <div class="no-products">
                             <i class="fas fa-store-alt"></i>
-                            <h3>No Products Available</h3>
-                            <p>You don't have any products yet. Visit our store or join our Discord server to get started!</p>
+                            <p>You don't have any products yet.</p>
+                            <p>Join our Discord server to get started!</p>
                             <div class="button-group">
-                                <a href="store.html" class="action-button store">
+                                <a href="store.html" class="action-button store-button">
                                     <i class="fas fa-shopping-cart"></i>
                                     Visit Store
                                 </a>
-                                <a href="https://discord.gg/zn" class="action-button">
+                                <a href="https://discord.gg/zn" class="action-button" target="_blank">
                                     <i class="fab fa-discord"></i>
-                                    Join Discord
+                                    Join Server
                                 </a>
                             </div>
                         </div>
