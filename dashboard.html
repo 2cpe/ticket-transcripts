@@ -313,6 +313,62 @@
         .tab-section.active {
             display: block;
         }
+
+        .no-products {
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--secondary-black);
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .no-products i {
+            font-size: 48px;
+            color: var(--accent-gold);
+            margin-bottom: 20px;
+        }
+
+        .no-products p {
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .no-products p:first-of-type {
+            color: var(--text-light);
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .store-button {
+            background: var(--secondary-black);
+            color: var(--accent-gold);
+            border: 2px solid var(--accent-gold);
+        }
+
+        @media (max-width: 480px) {
+            .button-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .button-group .action-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body>
