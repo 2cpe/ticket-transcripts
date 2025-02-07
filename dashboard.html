@@ -6,6 +6,12 @@
     <title>Ticket Transcripts Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         :root {
             --primary-black: #0a0a0a;
             --secondary-black: #141414;
@@ -16,16 +22,11 @@
             --card-border: #2a2a2a;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
             font-family: 'Segoe UI', sans-serif;
             background-color: var(--primary-black);
             color: var(--text-light);
+            min-height: 100vh;
             position: relative;
             overflow-x: hidden;
         }
@@ -73,8 +74,8 @@
         }
 
         .header {
-            background: var(--secondary-black);
-            padding: 25px;
+            background-color: var(--secondary-black);
+            padding: 30px;
             border-radius: 20px;
             margin-bottom: 20px;
             border: 1px solid var(--card-border);
@@ -108,175 +109,150 @@
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            border: 2px solid var(--accent-gold);
+            border: 3px solid var(--accent-gold);
             box-shadow: 0 0 20px rgba(196, 164, 86, 0.2);
         }
 
-        .nav-bar {
-            background: var(--secondary-black);
+        .transcripts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .transcript-card {
+            background-color: var(--secondary-black);
             border-radius: 20px;
-            margin-bottom: 20px;
-            padding: 5px;
+            padding: 30px;
             border: 1px solid var(--card-border);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 5px;
-            justify-content: center;
-        }
-
-        .nav-link {
-            color: var(--text-muted);
-            text-decoration: none;
-            padding: 15px 30px;
-            border-radius: 15px;
             transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-
-        .nav-link:hover {
-            background: rgba(196, 164, 86, 0.1);
-            color: var(--accent-gold);
-        }
-
-        .nav-link.active {
-            background: linear-gradient(45deg, var(--accent-gold), var(--accent-bronze));
-            color: var(--primary-black);
-            font-weight: 600;
-        }
-
-        .welcome-card {
-            background: var(--secondary-black);
-            border-radius: 20px;
-            padding: 40px;
-            text-align: center;
-            margin-bottom: 30px;
-            border: 1px solid var(--card-border);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             position: relative;
             overflow: hidden;
         }
 
-        .welcome-card::before {
+        .transcript-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(45deg, rgba(196, 164, 86, 0.1), transparent);
+            background: linear-gradient(45deg, rgba(196, 164, 86, 0.05), transparent);
             pointer-events: none;
-        }
-
-        .stats-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: var(--secondary-black);
-            border-radius: 20px;
-            padding: 30px;
-            text-align: center;
-            border: 1px solid var(--card-border);
-            transition: transform 0.3s ease;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-card i {
-            font-size: 32px;
-            color: var(--accent-gold);
-            margin-bottom: 15px;
-        }
-
-        .transcript-card {
-            background: var(--secondary-black);
-            border-radius: 20px;
-            padding: 25px;
-            border: 1px solid var(--card-border);
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
         }
 
         .transcript-card:hover {
             transform: translateY(-5px);
             border-color: var(--accent-gold);
-            box-shadow: 0 12px 40px rgba(196, 164, 86, 0.1);
+            box-shadow: 0 8px 30px rgba(196, 164, 86, 0.1);
+        }
+
+        .transcript-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .transcript-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .transcript-date {
+            color: #72767d;
+            font-size: 0.9em;
+        }
+
+        .transcript-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
         }
 
         .action-button {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            border-radius: 4px;
+            gap: 10px;
+            background: linear-gradient(45deg, var(--accent-gold), var(--accent-bronze));
+            color: var(--primary-black);
+            padding: 15px 30px;
+            border-radius: 12px;
             text-decoration: none;
-            font-weight: 500;
-            font-size: 13px;
+            font-weight: 600;
             transition: all 0.3s ease;
-            min-width: 120px;
-            justify-content: center;
-            background: var(--primary-black) !important;
-            color: var(--accent-gold) !important;
-            border: 1px solid var(--accent-gold);
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
         }
 
-        .action-button i {
-            font-size: 13px;
+        .action-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .action-button:hover::before {
+            transform: translateX(100%);
         }
 
         .action-button:hover {
-            opacity: 0.9;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(196, 164, 86, 0.2);
         }
 
         .logout-button {
-            background: var(--secondary-black);
-            color: var(--accent-gold);
-            border: 2px solid var(--accent-gold);
-            padding: 10px 20px;
+            background: linear-gradient(45deg, #ed4245, #c43636);
+            color: var(--text-light);
+            padding: 12px 25px;
             border-radius: 12px;
+            border: none;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 8px;
+            font-weight: 600;
         }
 
         .logout-button:hover {
-            background: rgba(196, 164, 86, 0.1);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(196, 51, 51, 0.2);
         }
 
-        @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #ffffff;
+        }
+
+        .no-transcripts {
+            text-align: center;
+            padding: 40px;
+            color: #72767d;
         }
 
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
-                gap: 20px;
                 text-align: center;
+                padding: 20px;
+            }
+
+            .user-info {
+                flex-direction: column;
+                margin-bottom: 20px;
             }
 
             .nav-links {
@@ -287,13 +263,57 @@
                 justify-content: center;
             }
 
-            .stats-cards {
+            .transcripts-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .welcome-card {
+                padding: 30px 20px;
+            }
+
+            .stat-card {
+                padding: 20px;
             }
         }
 
-        .tab-sections {
-            margin-top: 20px;
+        .nav-bar {
+            background-color: var(--secondary-black);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            padding: 5px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+        }
+
+        .nav-link {
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 15px 25px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(45deg, rgba(196, 164, 86, 0.1), rgba(179, 144, 85, 0.1));
+            color: var(--accent-gold);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(45deg, var(--accent-gold), var(--accent-bronze));
+            color: var(--primary-black);
+            font-weight: 600;
         }
 
         .tab-section {
@@ -304,76 +324,287 @@
             display: block;
         }
 
-        .no-products {
-            text-align: center;
-            padding: 60px 20px;
-            background: var(--secondary-black);
+        .welcome-card {
+            background-color: var(--secondary-black);
             border-radius: 20px;
+            padding: 50px 40px;
+            text-align: center;
+            margin-bottom: 30px;
             border: 1px solid var(--card-border);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
         }
 
-        .no-products i {
-            font-size: 48px;
+        .welcome-card h2 {
+            font-size: 32px;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, var(--accent-gold), var(--accent-bronze));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background-color: var(--secondary-black);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid var(--card-border);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .stat-card i {
+            font-size: 32px;
             color: var(--accent-gold);
             margin-bottom: 20px;
         }
 
-        .no-products p {
+        .stat-card h3 {
+            font-size: 18px;
             color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .stat-card span {
+            font-size: 36px;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--accent-gold), var(--accent-bronze));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .downloads-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background-color: #2f3136;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #40444b;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 5px;
             margin-bottom: 15px;
+        }
+
+        .download-button {
+            background-color: #5865f2;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .download-button:hover {
+            background-color: #4752c4;
+        }
+
+        .product-role {
+            margin: 10px 0;
+        }
+
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background-color: #43b581;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .role-badge i {
+            font-size: 14px;
+        }
+
+        .no-products {
+            background-color: #2f3136;
+            border-radius: 10px;
+            padding: 60px 30px;
+            text-align: center;
+            border: 1px solid #40444b;
+            margin: 0 auto;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+        }
+
+        .no-products i {
+            font-size: 64px;
+            color: #5865f2;
+            margin-bottom: 30px;
+            animation: float 3s ease-in-out infinite;
+            background: linear-gradient(45deg, #5865f2, #7289da);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .no-products p {
+            color: #b9bbbe;
+            margin: 10px 0;
             font-size: 16px;
             line-height: 1.6;
+            max-width: 280px;
         }
 
         .no-products p:first-of-type {
-            color: var(--text-light);
-            font-size: 20px;
+            font-size: 24px;
             font-weight: 600;
-            margin-bottom: 10px;
+            color: #ffffff;
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
+
+        .no-products .action-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(45deg, #5865f2, #7289da);
+            color: white;
+            text-decoration: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            margin-top: 30px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(88, 101, 242, 0.2);
+        }
+
+        .no-products .action-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(88, 101, 242, 0.3);
+            background: linear-gradient(45deg, #4752c4, #5865f2);
+        }
+
+        .no-products .action-button i {
+            font-size: 20px;
+            margin: 0;
+            animation: none;
+            background: none;
+            -webkit-text-fill-color: white;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px) scale(1.05);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        /* Update responsive styles */
+        @media (max-width: 480px) {
+            .no-products {
+                padding: 40px 20px;
+                position: relative;
+                top: 50px;
+                transform: translateX(-50%);
+                margin-bottom: 100px;
+            }
+
+            #downloads-section {
+                min-height: 400px;
+            }
+        }
+
+        /* Update the downloads-section to handle absolute positioning */
+        #downloads-section {
+            position: relative;
+            min-height: 500px; /* Adjust based on your needs */
         }
 
         .button-group {
             display: flex;
-            gap: 8px;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
             justify-content: center;
-            margin-top: 25px;
+        }
+
+        .button-group .action-button {
+            min-width: 160px;
+            margin-top: 0;
         }
 
         .store-button {
-            background: var(--primary-black) !important;
-            color: var(--accent-gold) !important;
-            border: 1px solid var(--accent-gold);
+            background: linear-gradient(45deg, #43b581, #43b581) !important;
         }
 
-        .action-button:not(.store-button) {
-            background: var(--accent-gold) !important;
-            color: var(--primary-black) !important;
-            border: none;
+        .store-button:hover {
+            background: linear-gradient(45deg, #3ca374, #3ca374) !important;
         }
 
-        .action-button i {
-            font-size: 13px;
-        }
-
+        /* Update responsive styles for buttons */
         @media (max-width: 480px) {
             .button-group {
                 flex-direction: column;
-                gap: 8px;
+                gap: 10px;
+                width: 100%;
             }
 
             .button-group .action-button {
                 width: 100%;
-                justify-content: center;
             }
         }
 
-        /* Update the cart icon specifically */
-        .store-button i {
-            font-size: 13px;
-            transform: translateY(-1px); /* Slight adjustment for cart icon alignment */
+        /* Add company logo styles */
+        .company-logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        /* Add premium accents */
+        .premium-accent {
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-bronze), var(--accent-gold));
+            top: 0;
+            left: 0;
         }
     </style>
 </head>
@@ -409,7 +640,7 @@
             </div>
         </nav>
 
-        <div class="tab-sections">
+        <div class="content">
             <div id="home-section" class="tab-section active">
                 <div class="welcome-card">
                     <h2>Welcome, <span id="welcome-username">User</span>!</h2>
@@ -419,12 +650,12 @@
                     <div class="stat-card">
                         <i class="fas fa-ticket-alt"></i>
                         <h3>Total Tickets</h3>
-                        <p id="tickets-count">0</p>
+                        <span id="tickets-count">0</span>
                     </div>
                     <div class="stat-card">
-                        <i class="fas fa-box"></i>
+                        <i class="fas fa-download"></i>
                         <h3>Products Owned</h3>
-                        <p id="products-count">0</p>
+                        <span id="products-count">0</span>
                     </div>
                 </div>
             </div>
