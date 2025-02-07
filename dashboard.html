@@ -235,14 +235,16 @@
             transition: all 0.3s ease;
             min-width: 120px;
             justify-content: center;
+            background: var(--primary-black) !important;
+            color: var(--accent-gold) !important;
+            border: 1px solid var(--accent-gold);
         }
 
-        .action-button::before {
-            display: none;
+        .action-button i {
+            font-size: 13px;
         }
 
         .action-button:hover {
-            transform: none;
             opacity: 0.9;
         }
 
@@ -366,6 +368,12 @@
                 width: 100%;
                 justify-content: center;
             }
+        }
+
+        /* Update the cart icon specifically */
+        .store-button i {
+            font-size: 13px;
+            transform: translateY(-1px); /* Slight adjustment for cart icon alignment */
         }
     </style>
 </head>
