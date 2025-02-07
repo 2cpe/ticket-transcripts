@@ -448,91 +448,92 @@
         }
 
         .no-products {
-            background-color: #2f3136;
-            border-radius: 10px;
-            padding: 60px 30px;
+            background-color: var(--secondary-black);
+            border-radius: 20px;
+            padding: 60px 40px;
             text-align: center;
-            border: 1px solid #40444b;
+            border: 1px solid var(--card-border);
             margin: 0 auto;
-            max-width: 400px;
+            max-width: 500px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .no-products::before {
+            content: '';
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(196, 164, 86, 0.05), transparent);
+            pointer-events: none;
         }
 
         .no-products i {
-            font-size: 64px;
-            color: #5865f2;
+            font-size: 72px;
             margin-bottom: 30px;
+            background: linear-gradient(45deg, var(--accent-gold), var(--accent-bronze));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             animation: float 3s ease-in-out infinite;
-            background: linear-gradient(45deg, #5865f2, #7289da);
+        }
+
+        .no-products p {
+            color: var(--text-muted);
+            margin: 10px 0;
+            font-size: 18px;
+            line-height: 1.6;
+            max-width: 320px;
+        }
+
+        .no-products p:first-of-type {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, var(--accent-gold), var(--accent-bronze));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .no-products p {
-            color: #b9bbbe;
-            margin: 10px 0;
-            font-size: 16px;
-            line-height: 1.6;
-            max-width: 280px;
-        }
-
-        .no-products p:first-of-type {
-            font-size: 24px;
-            font-weight: 600;
-            color: #ffffff;
-            margin-bottom: 15px;
-            letter-spacing: -0.5px;
+        .no-products .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
         }
 
         .no-products .action-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: linear-gradient(45deg, #5865f2, #7289da);
-            color: white;
-            text-decoration: none;
-            padding: 14px 28px;
-            border-radius: 8px;
-            margin-top: 30px;
-            font-weight: 600;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(88, 101, 242, 0.2);
+            min-width: 160px;
+        }
+
+        .no-products .store-button {
+            background: linear-gradient(45deg, var(--accent-gold), var(--accent-bronze));
+            color: var(--primary-black);
+        }
+
+        .no-products .discord-button {
+            background: var(--secondary-black);
+            color: var(--accent-gold);
+            border: 2px solid var(--accent-gold);
         }
 
         .no-products .action-button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(88, 101, 242, 0.3);
-            background: linear-gradient(45deg, #4752c4, #5865f2);
-        }
-
-        .no-products .action-button i {
-            font-size: 20px;
-            margin: 0;
-            animation: none;
-            background: none;
-            -webkit-text-fill-color: white;
+            box-shadow: 0 10px 20px rgba(196, 164, 86, 0.2);
         }
 
         @keyframes float {
-            0% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-10px) scale(1.05);
-            }
-            100% {
-                transform: translateY(0px);
-            }
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
         }
 
         /* Update responsive styles */
@@ -670,7 +671,21 @@
 
             <div id="downloads-section" class="tab-section">
                 <div id="downloads" class="downloads-grid">
-                    <!-- Downloads content will be populated here -->
+                    <div class="no-products">
+                        <i class="fas fa-store-alt"></i>
+                        <p>Discover Premium Features</p>
+                        <p>Unlock exclusive tools and features by exploring our store or joining our Discord community.</p>
+                        <div class="button-group">
+                            <a href="store.html" class="action-button store-button">
+                                <i class="fas fa-shopping-cart"></i>
+                                Visit Store
+                            </a>
+                            <a href="https://discord.gg/zn" class="action-button discord-button" target="_blank">
+                                <i class="fab fa-discord"></i>
+                                Join Discord
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
