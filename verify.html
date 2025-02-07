@@ -4,53 +4,151 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verify Access</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        :root {
+            --primary-black: #0a0a0a;
+            --secondary-black: #141414;
+            --accent-gold: #c4a456;
+            --accent-bronze: #b39055;
+            --text-light: #ffffff;
+            --text-muted: #a0a0a0;
+            --card-border: #2a2a2a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Segoe UI', sans-serif;
-            background-color: #36393f;
-            color: #ffffff;
+            background-color: var(--primary-black);
+            color: var(--text-light);
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
+            background-image: linear-gradient(45deg, #0a0a0a 25%, #0f0f0f 25%, #0f0f0f 50%, #0a0a0a 50%, #0a0a0a 75%, #0f0f0f 75%, #0f0f0f 100%);
+            background-size: 40px 40px;
         }
+
         .container {
+            background-color: var(--secondary-black);
+            border-radius: 15px;
+            width: 400px;
+            padding: 40px;
             text-align: center;
-            padding: 30px;
-            background-color: #2f3136;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            max-width: 400px;
-            width: 90%;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--card-border);
+            position: relative;
+            overflow: hidden;
         }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(196, 164, 86, 0.05), transparent);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .icon {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 24px;
+            border-radius: 20px;
+            padding: 16px;
+            background: var(--secondary-black);
+            border: 2px solid var(--accent-gold);
+            position: relative;
+            z-index: 2;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-light);
+            position: relative;
+            z-index: 2;
+        }
+
+        .description {
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            font-size: 16px;
+            line-height: 1.5;
+            position: relative;
+            z-index: 2;
+        }
+
         .button {
-            background-color: #5865F2;
-            color: white;
+            background: linear-gradient(45deg, var(--accent-gold), var(--accent-bronze));
+            color: var(--primary-black);
             border: none;
-            padding: 12px 24px;
-            border-radius: 4px;
+            padding: 14px 28px;
+            border-radius: 12px;
             font-size: 16px;
             cursor: pointer;
-            margin-top: 20px;
             text-decoration: none;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+            z-index: 2;
         }
+
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .button:hover::before {
+            transform: translateX(100%);
+        }
+
         .button:hover {
-            background-color: #4752C4;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(196, 164, 86, 0.2);
         }
-        .icon {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 20px;
-        }
-        .title {
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-        .description {
-            color: #b9bbbe;
-            margin-bottom: 20px;
+
+        @media (max-width: 480px) {
+            .container {
+                width: calc(100% - 32px);
+                margin: 16px;
+                padding: 32px 24px;
+            }
+            
+            .icon {
+                width: 80px;
+                height: 80px;
+                padding: 12px;
+            }
+            
+            .title {
+                font-size: 24px;
+            }
+            
+            .description {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -60,7 +158,8 @@
         <h1 class="title">Verify Your Identity</h1>
         <p class="description">To view this ticket transcript, please verify that you are the ticket creator.</p>
         <a href="#" class="button" id="verifyButton">
-            <i class="fab fa-discord"></i> Verify with Discord
+            <i class="fab fa-discord"></i>
+            Verify with Discord
         </a>
     </div>
 
