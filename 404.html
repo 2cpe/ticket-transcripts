@@ -3,9 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - Page Not Found | RaZo</title>
+    <title>404 - Page Not Found</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        :root {
+            --primary-black: #0a0a0a;
+            --secondary-black: #141414;
+            --accent-gold: #c4a456;
+            --accent-bronze: #b39055;
+            --text-light: #ffffff;
+            --text-muted: #a0a0a0;
+            --card-border: #2a2a2a;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -14,66 +24,109 @@
 
         body {
             font-family: 'Segoe UI', sans-serif;
-            background-color: #36393f;
-            color: #ffffff;
+            background-color: var(--primary-black);
+            color: var(--text-light);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .error-container {
-            text-align: center;
-            padding: 40px;
-            max-width: 600px;
-            background: linear-gradient(145deg, #2f3136, #36393f);
-            border-radius: 20px;
-            border: 1px solid #40444b;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
             position: relative;
             overflow: hidden;
         }
 
-        .error-container::before {
-            content: '';
+        .geometric-bg {
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at top right, rgba(88, 101, 242, 0.1), transparent);
-            pointer-events: none;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.1;
         }
 
-        .error-icon {
-            font-size: 80px;
-            color: #5865f2;
-            margin-bottom: 20px;
-            animation: float 3s ease-in-out infinite;
-            background: linear-gradient(45deg, #5865f2, #7289da);
+        .geometric-bg::before,
+        .geometric-bg::after {
+            content: '';
+            position: absolute;
+            width: 1000px;
+            height: 1000px;
+            background: linear-gradient(45deg, var(--accent-gold), var(--accent-bronze));
+            animation: rotate 20s linear infinite;
+        }
+
+        .geometric-bg::before {
+            top: -50%;
+            left: -50%;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        }
+
+        .geometric-bg::after {
+            bottom: -50%;
+            right: -50%;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            animation-direction: reverse;
+        }
+
+        .error-container {
+            text-align: center;
+            padding: 60px 40px;
+            max-width: 600px;
+            background: var(--secondary-black);
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .error-number {
+            font-size: 120px;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--accent-gold), var(--accent-bronze));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            line-height: 1;
+            margin-bottom: 20px;
+            position: relative;
+            text-shadow: 2px 2px 10px rgba(196, 164, 86, 0.3);
+        }
+
+        .error-number::after {
+            content: '404';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 122px;
+            background: none;
+            -webkit-text-fill-color: transparent;
+            -webkit-text-stroke: 2px rgba(196, 164, 86, 0.1);
+            z-index: -1;
+            filter: blur(8px);
         }
 
         .error-title {
-            font-size: 36px;
-            font-weight: 800;
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--text-light);
             margin-bottom: 15px;
-            background: linear-gradient(45deg, #5865f2, #7289da);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
 
         .error-message {
-            color: #b9bbbe;
+            color: var(--text-muted);
             font-size: 18px;
             line-height: 1.6;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .button-group {
             display: flex;
-            gap: 15px;
+            gap: 20px;
             justify-content: center;
             flex-wrap: wrap;
         }
@@ -81,53 +134,66 @@
         .action-button {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            background: linear-gradient(45deg, rgba(88, 101, 242, 0.9), rgba(114, 137, 218, 0.9));
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
+            gap: 10px;
+            background: linear-gradient(45deg, var(--accent-gold), var(--accent-bronze));
+            color: var(--primary-black);
+            padding: 15px 30px;
+            border-radius: 12px;
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
             transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
         }
 
-        .action-button.home {
-            background: linear-gradient(45deg, rgba(67, 181, 129, 0.9), rgba(103, 214, 147, 0.9));
+        .action-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .action-button:hover::before {
+            transform: translateX(100%);
         }
 
         .action-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(88, 101, 242, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(196, 164, 86, 0.2);
         }
 
-        .action-button.home:hover {
-            box-shadow: 0 6px 20px rgba(67, 181, 129, 0.3);
+        .action-button.home {
+            background: var(--secondary-black);
+            color: var(--accent-gold);
+            border: 2px solid var(--accent-gold);
         }
 
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         @media (max-width: 480px) {
             .error-container {
                 margin: 20px;
-                padding: 30px;
+                padding: 40px 20px;
             }
 
-            .error-icon {
-                font-size: 60px;
+            .error-number {
+                font-size: 80px;
+            }
+
+            .error-number::after {
+                font-size: 82px;
             }
 
             .error-title {
-                font-size: 28px;
-            }
-
-            .error-message {
-                font-size: 16px;
+                font-size: 24px;
             }
 
             .button-group {
@@ -142,14 +208,15 @@
     </style>
 </head>
 <body>
+    <div class="geometric-bg"></div>
     <div class="error-container">
-        <i class="fas fa-ghost error-icon"></i>
-        <h1 class="error-title">404 - Page Not Found</h1>
-        <p class="error-message">Oops! The page you're looking for seems to have vanished into the digital void.</p>
+        <div class="error-number">404</div>
+        <h1 class="error-title">Page Not Found</h1>
+        <p class="error-message">The page you're looking for has vanished into the digital abyss. Let's get you back on track.</p>
         <div class="button-group">
             <a href="/ticket-transcripts/dashboard.html" class="action-button home">
                 <i class="fas fa-home"></i>
-                Go Home
+                Return Home
             </a>
             <a href="https://discord.gg/zn" class="action-button" target="_blank">
                 <i class="fab fa-discord"></i>
