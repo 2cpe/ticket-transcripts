@@ -294,89 +294,6 @@
             margin-bottom: 20px;
         }
 
-        .embeds {
-            margin-top: 15px;
-            margin-left: 52px;
-        }
-
-        .decorated-video, .decorated-image {
-            background: var(--secondary-black);
-            border-radius: 15px;
-            overflow: hidden;
-            border: 1px solid var(--card-border);
-            transition: all 0.3s ease;
-            max-width: 400px;
-            margin-bottom: 15px;
-        }
-
-        .decorated-video:hover, .decorated-image:hover {
-            border-color: var(--accent-gold);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(196, 164, 86, 0.1);
-        }
-
-        .metadata {
-            padding: 12px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--card-border);
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        .details {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .name {
-            color: var(--text-light);
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .size {
-            color: var(--text-muted);
-            font-size: 12px;
-        }
-
-        .download {
-            color: var(--accent-gold);
-            padding: 8px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .download:hover {
-            background: rgba(196, 164, 86, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .download svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        video, img {
-            max-width: 100%;
-            display: block;
-        }
-
-        video {
-            background: #000;
-        }
-
-        /* Custom video controls styling */
-        video::-webkit-media-controls-panel {
-            background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
-        }
-
-        video::-webkit-media-controls-play-button {
-            background-color: var(--accent-gold);
-            border-radius: 50%;
-        }
-
         @media (max-width: 600px) {
             .container {
                 padding: 10px;
@@ -407,14 +324,6 @@
             .content, .attachments {
                 margin-left: 0;
                 margin-top: 12px;
-            }
-
-            .embeds {
-                margin-left: 0;
-            }
-
-            .decorated-video, .decorated-image {
-                max-width: 100%;
             }
         }
     </style>
@@ -678,72 +587,6 @@
                 window.location.reload();
             };
             container.appendChild(logoutButton);
-        }
-
-        function createMediaEmbed(attachment) {
-            const isVideo = attachment.url.match(/\.(mp4|webm|mov)$/i);
-            const isImage = attachment.url.match(/\.(jpg|jpeg|png|gif|webp)$/i);
-            
-            if (!isVideo && !isImage) return null;
-
-            const embed = document.createElement('div');
-            embed.className = 'embeds';
-
-            const decorated = document.createElement('div');
-            decorated.className = isVideo ? 'decorated-video' : 'decorated-image';
-            decorated.style.width = isVideo ? '400px' : 'auto';
-            
-            // Create metadata section
-            const metadata = document.createElement('div');
-            metadata.className = 'metadata';
-            
-            const details = document.createElement('div');
-            details.className = 'details';
-            details.innerHTML = `
-                <span class="name">${attachment.filename}</span>
-                <span class="size">${formatFileSize(attachment.size)}</span>
-            `;
-            
-            const download = document.createElement('a');
-            download.href = attachment.url;
-            download.className = 'download';
-            download.target = '_blank';
-            download.innerHTML = `
-                <svg width="24" height="24" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path>
-                </svg>
-            `;
-            
-            metadata.appendChild(details);
-            metadata.appendChild(download);
-            decorated.appendChild(metadata);
-            
-            // Create media element
-            if (isVideo) {
-                const video = document.createElement('video');
-                video.src = attachment.url;
-                video.controls = true;
-                video.controlsList = 'nodownload';
-                video.disablePictureInPicture = true;
-                video.poster = `${attachment.url}?format=jpeg`;
-                decorated.appendChild(video);
-            } else {
-                const img = document.createElement('img');
-                img.src = attachment.url;
-                img.alt = attachment.filename;
-                decorated.appendChild(img);
-            }
-            
-            embed.appendChild(decorated);
-            return embed;
-        }
-
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 B';
-            const k = 1024;
-            const sizes = ['B', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
 
         window.onload = loadTranscript;
