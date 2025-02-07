@@ -130,7 +130,7 @@
         }
 
         .nav-link {
-            color: var(--text-light);
+            color: var(--text-muted);
             text-decoration: none;
             padding: 15px 30px;
             border-radius: 15px;
@@ -138,6 +138,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            cursor: pointer;
         }
 
         .nav-link:hover {
@@ -300,6 +301,18 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        .tab-sections {
+            margin-top: 20px;
+        }
+
+        .tab-section {
+            display: none;
+        }
+
+        .tab-section.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -334,7 +347,7 @@
             </div>
         </nav>
 
-        <div class="content">
+        <div class="tab-sections">
             <div id="home-section" class="tab-section active">
                 <div class="welcome-card">
                     <h2>Welcome, <span id="welcome-username">User</span>!</h2>
@@ -344,12 +357,12 @@
                     <div class="stat-card">
                         <i class="fas fa-ticket-alt"></i>
                         <h3>Total Tickets</h3>
-                        <span id="tickets-count">0</span>
+                        <p id="tickets-count">0</p>
                     </div>
                     <div class="stat-card">
-                        <i class="fas fa-download"></i>
+                        <i class="fas fa-box"></i>
                         <h3>Products Owned</h3>
-                        <span id="products-count">0</span>
+                        <p id="products-count">0</p>
                     </div>
                 </div>
             </div>
