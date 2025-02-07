@@ -14,84 +14,80 @@
 
         body {
             font-family: 'Segoe UI', sans-serif;
-            background-color: #36393f;
-            color: #ffffff;
+            background-color: #1e1f22;
+            color: #f2f3f5;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
         }
 
         .container {
+            background-color: #2b2d31;
+            border-radius: 8px;
+            width: 480px;
+            padding: 32px;
             text-align: center;
-            padding: 40px;
-            background-color: #2f3136;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            max-width: 400px;
-            width: 90%;
-            border: 1px solid #40444b;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .icon {
-            width: 100px;
-            height: 100px;
-            margin-bottom: 20px;
-            border-radius: 50%;
-            padding: 10px;
-            background-color: #40444b;
+            width: 80px;
+            height: 80px;
+            margin-bottom: 24px;
+            border-radius: 16px;
+            padding: 16px;
+            background-color: #313338;
         }
 
         .title {
-            font-size: 28px;
-            margin-bottom: 15px;
-            color: #ffffff;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #f2f3f5;
         }
 
         .description {
-            color: #b9bbbe;
-            margin-bottom: 30px;
-            line-height: 1.5;
+            color: #b5bac1;
+            margin-bottom: 32px;
             font-size: 16px;
+            line-height: 1.5;
         }
 
         .button {
-            background-color: #5865F2;
-            color: white;
+            background-color: #5865f2;
+            color: #ffffff;
             border: none;
-            padding: 12px 24px;
+            padding: 12px 16px;
             border-radius: 4px;
             font-size: 16px;
             cursor: pointer;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            transition: all 0.2s ease;
+            gap: 8px;
+            transition: background-color 0.2s;
+            font-weight: 500;
         }
 
         .button:hover {
-            background-color: #4752C4;
-            transform: translateY(-2px);
-        }
-
-        .button i {
-            font-size: 20px;
+            background-color: #4752c4;
         }
 
         .features {
-            margin-top: 30px;
+            margin-top: 32px;
             text-align: left;
-            background-color: #40444b;
-            padding: 20px;
+            background-color: #313338;
+            padding: 16px;
             border-radius: 8px;
         }
 
         .features h3 {
-            color: #ffffff;
-            margin-bottom: 15px;
-            font-size: 18px;
+            color: #f2f3f5;
+            margin-bottom: 16px;
+            font-size: 16px;
+            font-weight: 600;
         }
 
         .features ul {
@@ -100,24 +96,34 @@
         }
 
         .features li {
-            color: #b9bbbe;
-            margin-bottom: 10px;
+            color: #b5bac1;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            font-size: 14px;
         }
 
         .features li i {
-            color: #5865F2;
+            color: #5865f2;
+            font-size: 16px;
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 520px) {
             .container {
-                padding: 30px 20px;
+                width: 100%;
+                margin: 16px;
+                padding: 24px;
+            }
+            
+            .icon {
+                width: 64px;
+                height: 64px;
+                padding: 12px;
             }
             
             .title {
-                font-size: 24px;
+                font-size: 20px;
             }
             
             .description {
@@ -129,10 +135,11 @@
 <body>
     <div class="container">
         <img src="https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png" alt="Logo" class="icon">
-        <h1 class="title">Ticket Transcripts</h1>
+        <h1 class="title">Welcome to Ticket Transcripts</h1>
         <p class="description">Access and manage your support ticket history with ease</p>
         <a href="#" class="button" id="loginButton">
-            <i class="fab fa-discord"></i> Login with Discord
+            <i class="fab fa-discord"></i>
+            Login with Discord
         </a>
         <div class="features">
             <h3>Features</h3>
@@ -149,7 +156,6 @@
         const CLIENT_ID = '1327745611230871572';
         const REDIRECT_URI = 'https://2cpe.github.io/ticket-transcripts/callback.html';
 
-        // Store the intended destination
         localStorage.setItem('redirect_after_login', 'dashboard.html');
 
         document.getElementById('loginButton').href = 
