@@ -431,138 +431,83 @@
         }
 
         .no-products {
-            background-color: var(--secondary-black);
-            border-radius: 15px;
-            padding: 60px 40px;
+            background-color: #1e1f22;
+            border-radius: 8px;
+            padding: 40px 20px;
             text-align: center;
-            border: 1px solid var(--card-border);
-            position: relative;
-            overflow: hidden;
-            max-width: 400px;
+            max-width: 320px;
             margin: 40px auto;
-        }
-
-        .no-products::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, rgba(196, 164, 86, 0.05), transparent);
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .no-products-content {
-            position: relative;
-            z-index: 2;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .no-products .store-icon {
-            font-size: 64px;
-            color: var(--accent-gold);
-            margin-bottom: 25px;
-            animation: float 3s ease-in-out infinite;
+            font-size: 32px;
+            color: #5865f2;
+            margin-bottom: 16px;
+            background: #2b2d31;
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
         }
 
         .no-products h3 {
-            font-size: 28px;
-            color: var(--text-light);
-            margin-bottom: 15px;
+            font-size: 20px;
+            color: #f2f3f5;
+            margin-bottom: 8px;
             font-weight: 600;
         }
 
         .no-products p {
-            color: var(--text-muted);
-            font-size: 16px;
-            line-height: 1.6;
-            margin-bottom: 30px;
+            color: #b5bac1;
+            font-size: 14px;
+            margin-bottom: 24px;
         }
 
         .no-products .button-group {
             display: flex;
-            gap: 15px;
-            justify-content: center;
+            flex-direction: column;
+            gap: 8px;
         }
 
         .no-products .action-button {
-            min-width: 160px;
-            padding: 14px 28px;
+            width: 100%;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
         }
 
         .no-products .store-button {
-            background: linear-gradient(45deg, var(--accent-gold), var(--accent-bronze));
+            background-color: #248046;
+            color: white;
+            border: none;
+        }
+
+        .no-products .store-button:hover {
+            background-color: #1a6334;
         }
 
         .no-products .discord-button {
-            background: var(--secondary-black);
-            color: var(--accent-gold);
-            border: 2px solid var(--accent-gold);
+            background-color: #5865f2;
+            color: white;
+            border: none;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        .no-products .discord-button:hover {
+            background-color: #4752c4;
         }
 
-        @media (max-width: 480px) {
-            .no-products {
-                margin: 20px;
-                padding: 40px 20px;
-            }
-
-            .no-products .button-group {
-                flex-direction: column;
-            }
-
-            .no-products .action-button {
-                width: 100%;
-            }
-        }
-
-        /* Update the downloads-section to handle absolute positioning */
-        #downloads-section {
-            position: relative;
-            min-height: 500px; /* Adjust based on your needs */
-        }
-
-        .button-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .button-group .action-button {
-            min-width: 160px;
-            margin-top: 0;
-        }
-
-        .store-button {
-            background: linear-gradient(45deg, #43b581, #43b581) !important;
-        }
-
-        .store-button:hover {
-            background: linear-gradient(45deg, #3ca374, #3ca374) !important;
-        }
-
-        /* Add company logo styles */
-        .company-logo {
-            width: 120px;
-            height: auto;
-            margin-bottom: 20px;
-        }
-
-        /* Add premium accents */
-        .premium-accent {
-            position: absolute;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-gold), var(--accent-bronze), var(--accent-gold));
-            top: 0;
-            left: 0;
+        .no-products .action-button i {
+            font-size: 16px;
         }
 
         @keyframes spin {
@@ -634,20 +579,18 @@
             <div id="downloads-section" class="tab-section">
                 <div id="downloads" class="downloads-grid">
                     <div class="no-products">
-                        <div class="no-products-content">
-                            <i class="fas fa-store-alt store-icon"></i>
-                            <h3>You don't have any products yet</h3>
-                            <p>Join our Discord server to get started!</p>
-                            <div class="button-group">
-                                <a href="store.html" class="action-button store-button">
-                                    <i class="fas fa-shopping-cart"></i>
-                                    Visit Store
-                                </a>
-                                <a href="https://discord.gg/zn" class="action-button discord-button">
-                                    <i class="fab fa-discord"></i>
-                                    Join Server
-                                </a>
-                            </div>
+                        <i class="fas fa-store store-icon"></i>
+                        <h3>You don't have any products yet.</h3>
+                        <p>Join our Discord server to get started!</p>
+                        <div class="button-group">
+                            <a href="store.html" class="action-button store-button">
+                                <i class="fas fa-shopping-cart"></i>
+                                Visit Store
+                            </a>
+                            <a href="https://discord.gg/zn" class="action-button discord-button">
+                                <i class="fab fa-discord"></i>
+                                Join Server
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -886,15 +829,15 @@
                 if (accessibleProducts.length === 0) {
                     document.getElementById('downloads').innerHTML = `
                         <div class="no-products">
-                            <i class="fas fa-store-alt"></i>
-                            <p>You don't have any products yet.</p>
+                            <i class="fas fa-store store-icon"></i>
+                            <h3>You don't have any products yet.</h3>
                             <p>Join our Discord server to get started!</p>
                             <div class="button-group">
                                 <a href="store.html" class="action-button store-button">
                                     <i class="fas fa-shopping-cart"></i>
                                     Visit Store
                                 </a>
-                                <a href="https://discord.gg/zn" class="action-button" target="_blank">
+                                <a href="https://discord.gg/zn" class="action-button discord-button">
                                     <i class="fab fa-discord"></i>
                                     Join Server
                                 </a>
