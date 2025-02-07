@@ -352,10 +352,27 @@
             margin-top: 30px;
         }
 
+        .button-group .action-button {
+            min-width: 180px;
+            justify-content: center;
+            padding: 15px 30px;
+            font-size: 16px;
+        }
+
         .store-button {
-            background: var(--secondary-black);
-            color: var(--accent-gold);
-            border: 2px solid var(--accent-gold);
+            background: var(--primary-black) !important;
+            color: var(--accent-gold) !important;
+            border: 1px solid var(--accent-gold);
+        }
+
+        .store-button:hover {
+            background: rgba(196, 164, 86, 0.1) !important;
+        }
+
+        .server-button {
+            background: linear-gradient(45deg, var(--accent-gold), var(--accent-bronze)) !important;
+            color: var(--primary-black) !important;
+            border: none !important;
         }
 
         @media (max-width: 480px) {
@@ -366,7 +383,6 @@
 
             .button-group .action-button {
                 width: 100%;
-                justify-content: center;
             }
         }
     </style>
@@ -668,7 +684,7 @@
                                     <i class="fas fa-shopping-cart"></i>
                                     Visit Store
                                 </a>
-                                <a href="https://discord.gg/zn" class="action-button" target="_blank">
+                                <a href="https://discord.gg/zn" class="action-button server-button" target="_blank">
                                     <i class="fab fa-discord"></i>
                                     Join Server
                                 </a>
