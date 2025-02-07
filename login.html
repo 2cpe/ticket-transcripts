@@ -6,6 +6,16 @@
     <title>Login - Ticket Transcripts</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        :root {
+            --primary-black: #0a0a0a;
+            --secondary-black: #141414;
+            --accent-gold: #c4a456;
+            --accent-bronze: #b39055;
+            --text-light: #ffffff;
+            --text-muted: #a0a0a0;
+            --card-border: #2a2a2a;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -14,79 +24,126 @@
 
         body {
             font-family: 'Segoe UI', sans-serif;
-            background-color: #1e1f22;
-            color: #f2f3f5;
+            background-color: var(--primary-black);
+            color: var(--text-light);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
+            background-image: linear-gradient(45deg, #0a0a0a 25%, #0f0f0f 25%, #0f0f0f 50%, #0a0a0a 50%, #0a0a0a 75%, #0f0f0f 75%, #0f0f0f 100%);
+            background-size: 40px 40px;
         }
 
         .container {
-            background-color: #2b2d31;
-            border-radius: 8px;
+            background-color: var(--secondary-black);
+            border-radius: 15px;
             width: 480px;
-            padding: 32px;
+            padding: 40px;
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--card-border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(196, 164, 86, 0.05), transparent);
+            pointer-events: none;
+            z-index: 1;
         }
 
         .icon {
-            width: 80px;
-            height: 80px;
+            width: 100px;
+            height: 100px;
             margin-bottom: 24px;
-            border-radius: 16px;
+            border-radius: 20px;
             padding: 16px;
-            background-color: #313338;
+            background-color: var(--secondary-black);
+            border: 2px solid var(--accent-gold);
+            position: relative;
+            z-index: 2;
         }
 
         .title {
-            font-size: 24px;
+            font-size: 32px;
             font-weight: 600;
-            margin-bottom: 8px;
-            color: #f2f3f5;
+            margin-bottom: 12px;
+            color: var(--text-light);
+            position: relative;
+            z-index: 2;
         }
 
         .description {
-            color: #b5bac1;
+            color: var(--text-muted);
             margin-bottom: 32px;
             font-size: 16px;
             line-height: 1.5;
+            position: relative;
+            z-index: 2;
         }
 
         .button {
-            background-color: #5865f2;
-            color: #ffffff;
+            background: linear-gradient(45deg, var(--accent-gold), var(--accent-bronze));
+            color: var(--primary-black);
             border: none;
-            padding: 12px 16px;
-            border-radius: 4px;
+            padding: 14px 28px;
+            border-radius: 12px;
             font-size: 16px;
             cursor: pointer;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            transition: background-color 0.2s;
-            font-weight: 500;
+            gap: 10px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .button:hover::before {
+            transform: translateX(100%);
         }
 
         .button:hover {
-            background-color: #4752c4;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(196, 164, 86, 0.2);
         }
 
         .features {
-            margin-top: 32px;
+            margin-top: 40px;
             text-align: left;
-            background-color: #313338;
-            padding: 16px;
-            border-radius: 8px;
+            background-color: var(--secondary-black);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            position: relative;
+            z-index: 2;
         }
 
         .features h3 {
-            color: #f2f3f5;
-            margin-bottom: 16px;
-            font-size: 16px;
+            color: var(--text-light);
+            margin-bottom: 20px;
+            font-size: 18px;
             font-weight: 600;
         }
 
@@ -96,38 +153,42 @@
         }
 
         .features li {
-            color: #b5bac1;
-            margin-bottom: 12px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 14px;
+            gap: 12px;
+            font-size: 15px;
         }
 
         .features li i {
-            color: #5865f2;
-            font-size: 16px;
+            color: var(--accent-gold);
+            font-size: 18px;
         }
 
         @media (max-width: 520px) {
             .container {
-                width: 100%;
+                width: calc(100% - 32px);
                 margin: 16px;
-                padding: 24px;
+                padding: 32px 24px;
             }
             
             .icon {
-                width: 64px;
-                height: 64px;
+                width: 80px;
+                height: 80px;
                 padding: 12px;
             }
             
             .title {
-                font-size: 20px;
+                font-size: 24px;
             }
             
             .description {
                 font-size: 14px;
+            }
+
+            .features {
+                padding: 20px;
             }
         }
     </style>
@@ -135,7 +196,7 @@
 <body>
     <div class="container">
         <img src="https://cdn.discordapp.com/attachments/1287013277607530571/1311268530016223232/rz5.png" alt="Logo" class="icon">
-        <h1 class="title">Welcome to Ticket Transcripts</h1>
+        <h1 class="title">Welcome Back</h1>
         <p class="description">Access and manage your support ticket history with ease</p>
         <a href="#" class="button" id="loginButton">
             <i class="fab fa-discord"></i>
